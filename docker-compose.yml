@@ -1,0 +1,67 @@
+version: "3.9"
+
+services:
+  # --- BANCO DE DADOS ---
+  db:
+    image: postgres:16-alpine 
+    container_name: hackathon-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hackathondb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hackathondb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hackathon-net
+
+  # --- BACKEND ---
+  backend:
+    build: 
+      context: ./Backend 
+      dockerfile: Dockerfile
+    container_name: hackathon-backend
+    ports:
+      - "8080:8080"
+    environment:
+      # Sobrescreve a URL do properties para garantir conexão interna
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/hackathondb
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - hackathon-net
+
+  # --- FRONTEND ---
+  frontend:
+    build:
+      context: ./Frontend 
+      dockerfile: Dockerfile
+    container_name: hackathon-frontend
+    ports:
+      - "4200:4200"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./Frontend:/app
+      - /app/node_modules
+
+    command: ["ng", "serve", "--host", "0.0.0.0"]
+    depends_on:
+      - backend
+    networks:
+      - hackathon-net
+
+volumes:
+  db_data:
+
+networks:
+  hackathon-net:
+    driver: bridge
