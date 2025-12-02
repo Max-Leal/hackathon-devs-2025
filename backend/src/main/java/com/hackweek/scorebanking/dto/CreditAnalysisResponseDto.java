@@ -1,4 +1,4 @@
-package com.hackweek.scorebanking.service;
+package com.hackweek.scorebanking.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

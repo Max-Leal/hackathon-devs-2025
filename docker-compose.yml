@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   # --- BANCO DE DADOS ---
   db:
@@ -25,7 +23,7 @@ services:
   # --- BACKEND ---
   backend:
     build: 
-      context: ./Backend 
+      context: ./backend
       dockerfile: Dockerfile
     container_name: hackathon-backend
     ports:
@@ -42,7 +40,7 @@ services:
   # --- FRONTEND ---
   frontend:
     build:
-      context: ./Frontend 
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: hackathon-frontend
     ports:
@@ -50,7 +48,7 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
     volumes:
-      - ./Frontend:/app
+      - ./frontend:/app
       - /app/node_modules
 
     command: ["ng", "serve", "--host", "0.0.0.0"]

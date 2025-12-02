@@ -1,4 +1,4 @@
-package com.hackweek.scorebanking.service;
+package com.hackweek.scorebanking.controller;
 
 import com.hackweek.scorebanking.dto.CreditAnalysisResponseDto;
 import com.hackweek.scorebanking.dto.CustomerInputDto;

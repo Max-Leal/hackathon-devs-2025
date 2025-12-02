@@ -1,4 +1,4 @@
-package com.hackweek.scorebanking.service;
+package com.hackweek.scorebanking.repository;
 
 import com.hackweek.scorebanking.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
