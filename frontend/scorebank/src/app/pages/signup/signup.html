@@ -1,1 +1,9 @@
-<p>signup works!</p>
+<app-loading 
+  [isLoading]="isLoading" 
+  [phrases]="currentPhrases"
+  (loadingComplete)="onLoadingComplete()">
+</app-loading>
+
+<div>Signup Works</div>
+
+  
