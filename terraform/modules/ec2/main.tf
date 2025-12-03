@@ -9,7 +9,7 @@ resource "aws_instance" "instance-scorebanking" {
   user_data = base64encode(<<-EOF
     #!/bin/bash
     apt-get update
-    apt install -y docker.io git build-essential docker-compose cron
+    apt install -y docker.io git build-essential docker-compose
     systemctl start docker
     systemctl enable docker
     systemctl start cron
@@ -21,9 +21,6 @@ resource "aws_instance" "instance-scorebanking" {
     git checkout develop
     make docker-build
     make docker-run      
-
-    chmod +x /root/hackathon-devs-2025/auto_update.sh
-    (crontab -l 2>/dev/null; echo "*/2 * * * * /root/hackathon-devs-2025/auto_update.sh") | crontab -
   EOF
   )
 
