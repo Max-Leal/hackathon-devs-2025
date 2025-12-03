@@ -45,9 +45,9 @@ jobs:
       - name: Destroy ec2 already running the project
         id: destroy
         run: make tf-destroy
-        working-directory: ./terraform
+        working-directory: terraform
 
       - name: Deploys on AWS
         id: apply
         run: make tf-apply
-        working-directory: ./terraform
+        working-directory: terraform
