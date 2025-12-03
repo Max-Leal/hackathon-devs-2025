@@ -7,13 +7,13 @@
                     <h1 class="text-[#111827] text-2xl font-bold">Score Banking</h1>
                 </div>
                 <div class="flex gap-3">
-                    <button (click)="onSignIn()" class="px-6 py-2 text-[#0B5FFF] hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">Entrar</button>
-                    <button (click)="onSignUp()" class="px-6 py-2 bg-[#0B5FFF] text-white rounded-lg hover:bg-[#0A54E0] transition-colors cursor-pointer">Criar conta</button>
+                    <button (click)="onSignIn()" class="px-6 font-bold py-2 text-[#319F86] hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">Entrar</button>
+                    <button (click)="onSignUp()" class="px-6 py-2 font-bold bg-[#319F86] text-white rounded-lg hover:bg-[#3e9a84] transition-colors cursor-pointer">Criar conta</button>
                 </div>
             </div>
         </div>
     </header>
-    <section class="bg-[#0B5FFF] text-white py-20 sm:py-32">
+    <section class="bg-[#319F86] text-white py-20 sm:py-32">
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="max-w-3xl mx-auto text-center">
                 <h1 class="mb-6 text-white">
@@ -25,7 +25,7 @@
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <button (click)="onSignUp()"
-                        class="cursor-pointer px-8 py-3 bg-white text-[#0B5FFF] rounded-lg hover:bg-gray-100 transition-colors">
+                        class="cursor-pointer px-8 py-3 bg-white font-bold text-[#319F86] rounded-lg hover:bg-gray-100 transition-colors">
                         Criar conta
                     </button>
                     <button (click)="onSignIn()"
@@ -39,26 +39,26 @@
 
     <section class="py-16 sm:py-24">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-center mb-12 text-[#111827]">
+            <h2 class="text-center font-bold mb-12 text-[#111827]">
                 Tudo que você precisa em um só lugar
             </h2>
             <div class=" grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div
                     class="bg-white rounded-2xl p-8 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                    <h3 class="mb-3 text-[#111827]">Conta digital</h3>
+                    <h3 class="mb-3 font-bold text-[#111827]">Conta digital</h3>
                     <p class="text-[#6B7280]">
                         Conta completa sem tarifas, com cartão internacional e rendimento automático.
                     </p>
                 </div>
                 <div
                     class="bg-white rounded-2xl p-8 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                    <h3 class="mb-3 text-[#111827]">Empréstimos</h3>
+                    <h3 class="mb-3 font-bold text-[#111827]">Empréstimos</h3>
                     <p class="text-[#6B7280]">
                         Crédito pré-aprovado baseado no seu nível de confiança, com taxas personalizadas.
                     </p>
                 </div>
                 <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                    <h3 class="mb-3 text-[#111827]">Cartão pré-aprovado</h3>
+                    <h3 class="mb-3 font-bold text-[#111827]">Cartão pré-aprovado</h3>
                     <p class="text-[#6B7280]">
                         Limite calculado em tempo real conforme seu histórico e comportamento financeiro.
                     </p>
@@ -66,22 +66,22 @@
             </div>
         </div>
     </section>
-    <footer class="bg-[#111827] text-white mt-auto py-12">
+    <footer class="bg-[#356859] text-white mt-auto py-12">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                 <div>
                     <div class="flex items-center gap-2 mb-4">
 
-                        <span>ConfiaBank</span>
+                        <span class="font-bold">Score Banking</span>
                     </div>
-                    <p class="text-gray-400 text-sm">
+                    <p class="text-white text-sm">
                         Banco digital com transparência e segurança para sua vida financeira.
                     </p>
                 </div>
 
                 <div>
-                    <h4 class="mb-4 text-white">Produtos</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
+                    <h4 class="mb-4 font-bold text-white">Produtos</h4>
+                    <ul class="space-y-2 text-sm text-white">
                         <li><a href="#" class="hover:text-white transition-colors">Conta digital</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Empréstimos</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Cartões</a></li>
@@ -90,8 +90,8 @@
                 </div>
 
                 <div>
-                    <h4 class="mb-4 text-white">Institucional</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
+                    <h4 class="mb-4 font-bold text-white">Institucional</h4>
+                    <ul class="space-y-2 text-sm text-white">
                         <li><a href="#" class="hover:text-white transition-colors">Sobre nós</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Segurança</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Privacidade</a></li>
@@ -100,8 +100,8 @@
                 </div>
 
                 <div>
-                    <h4 class="mb-4 text-white">Contato</h4>
-                    <ul class="space-y-3 text-sm text-gray-400">
+                    <h4 class="mb-4 font-bold text-white">Contato</h4>
+                    <ul class="space-y-3 text-sm text-white">
                         <li class="flex items-center gap-2">
                             <span>0800 123 4567</span>
                         </li>
@@ -115,7 +115,7 @@
                 </div>
             </div>
 
-            <div class="pt-8 border-t border-gray-800 text-center text-sm text-gray-400">
+            <div class="pt-8 border-t border-black text-center text-sm text-white">
                 <p>© 2025 Score Banking. Todos os direitos reservados.</p>
             </div>
         </div>
