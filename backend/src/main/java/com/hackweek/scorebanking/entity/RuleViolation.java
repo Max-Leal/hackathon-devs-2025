@@ -22,4 +22,4 @@ public class RuleViolation {
     @ManyToOne
     @JoinColumn(name = "analysis_id", nullable = false)
     private CreditAnalysis analysis;
-}
+}   
