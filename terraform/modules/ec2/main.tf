@@ -15,6 +15,7 @@ resource "aws_instance" "instance-scorebanking" {
     cd /root
     git clone https://github.com/Max-Leal/hackathon-devs-2025.git
     cd ./hackathon-devs-2025
+    git checkout feature/terraform
     make docker-build
     make docker-run      
   EOF
