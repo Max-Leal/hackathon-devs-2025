@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 @Table(name = "tb_customer")
 @Data
 @NoArgsConstructor
-
 public class Customer {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +25,7 @@ public class Customer {
 
   @Column(nullable = false, unique = true, length = 11)
   private String cpf;
+
+  @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+  private CustomerScoreData scoreData;
 }
