@@ -11,37 +11,42 @@ import java.math.RoundingMode;
 public class CreditEngineService {
 
     public int calculateScore(CustomerScoreData data) {
-
-        // deixei aqui como counter de bots criando conta como loucos
+        // 1. FRAUDE = ZERO (Morte Súbita)
         if (Boolean.TRUE.equals(data.getFraudSuspicion())) {
             return 0;
         }
 
-        // Idade influência nos pontos (Exemplo: Ganha pontos se for mais velho, até max 20)
-        // Se age for null, considera 18
-        int age = data.getAge() != null ? data.getAge() : 18;
-        int agePoints = (age > 18) ? Math.min((age - 18) * 2, 20) : 0;
+        // 2. IDADE < 18 = ZERO (Regra Legal)
+        int age = data.getAge() != null ? data.getAge() : 0;
+        if (age < 18) {
+            return 0;
+        }
 
-        // 3. Pontos por Renda (Exemplo: 1 ponto a cada 500 reais, max 30)
+        // 3. PONTOS POR RENDA (Aumentamos o peso)
+        // Regra: 1 ponto a cada R$ 500. Teto subiu para 40 pontos.
         BigDecimal income = data.getMonthlyIncome() != null ? data.getMonthlyIncome() : BigDecimal.ZERO;
         int incomePoints = income.divide(new BigDecimal("500"), RoundingMode.FLOOR).intValue();
-        incomePoints = Math.min(incomePoints, 30);
+        incomePoints = Math.min(incomePoints, 40); // Max 40 (antes era 30)
 
-        // 4. Pontos pelo Score Externo (Serasa Mockado)
-        // O mock preenche o creditScore, se for null considera 0
+        // 4. PONTOS POR SCORE EXTERNO (Serasa)
         int serasaScore = data.getCreditScore() != null ? data.getCreditScore() : 0;
-        int externalScorePoints = (serasaScore / 100) * 5; // Max 50 pontos
+        int externalScorePoints = (serasaScore / 100) * 5; 
 
-        // 5. Penalidade por Dívida Externa
+        // 5. PENALIDADE POR DÍVIDA
+        // Regra: Se deve mais de R$ 1.000, perde 40 pontos na cabeça.
         int debtPenalty = 0;
         if (data.getExternalDebt() != null && 
             data.getExternalDebt().compareTo(new BigDecimal("1000")) > 0) {
-            debtPenalty = 40; // Perde 40 pontos se dever muito
+            debtPenalty = 40;
         }
 
-        // CÁLCULO FINAL
-        int totalScore = 30 + agePoints + incomePoints + externalScorePoints - debtPenalty;
+        // 6. CÁLCULO FINAL (Ajuste Fino)
+        // Base Score caiu para 25 (antes era 50).
+        int baseScore = 25;
+        
+        int totalScore = baseScore + incomePoints + externalScorePoints - debtPenalty;
 
+        // Trava entre 0 e 100
         return Math.max(0, Math.min(100, totalScore));
     }
 

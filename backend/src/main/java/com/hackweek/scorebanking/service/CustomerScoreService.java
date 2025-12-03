@@ -1,6 +1,8 @@
 package com.hackweek.scorebanking.service;
 
 import com.hackweek.scorebanking.domain.RiskTier;
+import com.hackweek.scorebanking.dto.CustomerScoreDto;
+import com.hackweek.scorebanking.repository.CustomerScoreDataRepository;
 import com.hackweek.scorebanking.dto.ScoreResultResponse;
 import com.hackweek.scorebanking.entity.Customer;
 import com.hackweek.scorebanking.entity.CustomerScoreData;
@@ -14,49 +16,52 @@ import java.math.BigDecimal;
 public class CustomerScoreService {
 
     private final CustomerRepository customerRepository;
+    private final CustomerScoreDataRepository scoreDataRepository;
     private final CreditEngineService creditEngineService;
 
     public CustomerScoreService(CustomerRepository customerRepository,
+                                CustomerScoreDataRepository scoreDataRepository,
                                 CreditEngineService creditEngineService) {
         this.customerRepository = customerRepository;
+        this.scoreDataRepository = scoreDataRepository;
         this.creditEngineService = creditEngineService;
     }
 
     @Transactional
-    public ScoreResultResponse calculateCustomerScore(Long customerId) {
-
-        // 1. Buscar o cliente
+    public ScoreResultResponse processScoreAnalysis(Long customerId, CustomerScoreDto request) {
+        
+        // 1. Busca Cliente
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
-        // 2. Obter os dados financeiros (ScoreData)
-        CustomerScoreData scoreData = customer.getScoreData();
+        // 2. Busca ou Cria ScoreData (Vinculado corretamente)
+        CustomerScoreData scoreData = scoreDataRepository.findByCustomerId(customerId)
+                .orElse(new CustomerScoreData());
         
-        // Validação vital: Se o usuário acabou de se cadastrar e não preencheu dados
-        if (scoreData == null) {
-            // Em um cenário real, redirecionaria para preencher dados.
-            // Aqui, podemos criar um vazio ou lançar erro.
-            throw new RuntimeException("Dados financeiros incompletos. Por favor, atualize seu cadastro.");
-        }
+        // Garante o vínculo bidirecional (Essencial para o JPA não se perder)
+        scoreData.setCustomer(customer);
+        // Se a entidade Customer tiver o setScoreData, use também: customer.setScoreData(scoreData);
 
-        // 3. ENRIQUECIMENTO (SIMULAÇÃO): Preenche fraude/dívida baseado no CPF
+        // 3. Atualiza com os dados do JSON (DTO)
+        scoreData.setAge(request.age());
+        scoreData.setProfession(request.profession());
+        scoreData.setMonthlyIncome(request.monthlyIncome());
+        scoreData.setDependents(request.dependents());
+        scoreData.setEducationLevel(request.educationLevel());
+        scoreData.setHousingStatus(request.housingStatus());
+
+        // 4. ENRIQUECIMENTO (SIMULAÇÃO) - Preenche fraude/dívida
         enrichWithMockData(scoreData, customer.getCpf());
 
-        // --- A CORREÇÃO ESTÁ AQUI EMBAIXO ---
-        
-        // 4. Calcular score (Passando scoreData, NÃO customer)
-        int score = creditEngineService.calculateScore(scoreData); 
+        // 5. SALVA TUDO ANTES DE CALCULAR
+        // Como estamos dentro de um @Transactional, esse save é visível imediatamente para as próximas linhas
+        scoreData = scoreDataRepository.save(scoreData); 
 
-        // 5. Determinar classificação
+        // 6. CÁLCULO (Agora garantimos que scoreData tem dados mockados e ID)
+        int score = creditEngineService.calculateScore(scoreData);
         RiskTier riskTier = creditEngineService.determineRisk(score);
+        BigDecimal approvedLimit = creditEngineService.calculateApprovedLimit(scoreData.getMonthlyIncome(), riskTier);
 
-        // 6. Calcular limite
-        BigDecimal approvedLimit = creditEngineService.calculateApprovedLimit(
-                scoreData.getMonthlyIncome(), 
-                riskTier
-        );
-
-        // 7. Retornar DTO
         return new ScoreResultResponse(
                 customer.getId(),
                 score,
@@ -68,23 +73,14 @@ public class CustomerScoreService {
     // Lógica de Simulação baseada no final do CPF
     private void enrichWithMockData(CustomerScoreData data, String cpf) {
         char lastDigit = cpf.charAt(cpf.length() - 1);
-
-        if (lastDigit == '0') { // FRAUDE
-            data.setFraudSuspicion(true);
-            data.setExternalDebt(BigDecimal.ZERO);
-            data.setCreditScore(0);
-        } else if (lastDigit == '1') { // ENDIVIDADO
-            data.setFraudSuspicion(false);
-            data.setExternalDebt(new BigDecimal("15000.00"));
-            data.setCreditScore(250);
-        } else if (lastDigit == '9') { // RICO
-            data.setFraudSuspicion(false);
-            data.setExternalDebt(BigDecimal.ZERO);
-            data.setCreditScore(950);
-        } else { // MÉDIO
-            data.setFraudSuspicion(false);
-            data.setExternalDebt(new BigDecimal("500.00"));
-            data.setCreditScore(600);
+        if (lastDigit == '0') { 
+             data.setFraudSuspicion(true); data.setExternalDebt(BigDecimal.ZERO); data.setCreditScore(0);
+        } else if (lastDigit == '1') {
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("15000.00")); data.setCreditScore(250);
+        } else if (lastDigit == '9') {
+             data.setFraudSuspicion(false); data.setExternalDebt(BigDecimal.ZERO); data.setCreditScore(950);
+        } else {
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("500.00")); data.setCreditScore(600);
         }
     }
 }
