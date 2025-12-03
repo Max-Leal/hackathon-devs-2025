@@ -33,17 +33,17 @@ public class CreditService {
 
         int score = creditEngine.calculateScore(customer);
         RiskTier risk = creditEngine.determineRisk(score);
-        BigDecimal approvedLimit = creditEngine.calculateApprovedLimit(customer.getMonthlyIncome(), risk);
+//        BigDecimal approvedLimit = creditEngine.calculateApprovedLimit(customer.getMonthlyIncome(), risk);
         boolean approved = risk != RiskTier.TERRIBLE;
 
         CreditAnalysis analysis = new CreditAnalysis();
         analysis.setCustomer(customer);
         analysis.setScoreValue(score);
         analysis.setApproved(approved);
-        analysis.setApprovedLimit(approvedLimit);
+//        analysis.setApprovedLimit(approvedLimit);
         analysis.setApprovedInterestRate(risk.getInterestRate());
         analysis.setMaxInstallments(risk.getMaxInstallments());
-        analysis.setWithdrawalLimitValue(customer.getMonthlyIncome().multiply(new BigDecimal("0.30")));
+//        analysis.setWithdrawalLimitValue(customer.getMonthlyIncome().multiply(new BigDecimal("0.30")));
 
         analysisRepository.save(analysis);
 
@@ -63,10 +63,10 @@ public class CreditService {
         Customer newCustomer = new Customer();
         newCustomer.setCpf(input.cpf());
         newCustomer.setFullName(input.fullName());
-        newCustomer.setMonthlyIncome(input.monthlyIncome());
-        newCustomer.setAge(input.age());
-        newCustomer.setPhone(input.phone());
-        newCustomer.setProfession(input.profession());
+//        newCustomer.setMonthlyIncome(input.monthlyIncome());
+//        newCustomer.setAge(input.age());
+//        newCustomer.setPhone(input.phone());
+//        newCustomer.setProfession(input.profession());
         return customerRepository.save(newCustomer);
     }
 }

@@ -12,19 +12,19 @@ public class CreditEngineService {
 
     public int calculateScore(Customer customer) {
         // Lógica do cálculo
-        int agePoints = (customer.getAge() > 18) ? Math.min((customer.getAge() - 18) * 2, 20) : 0;
-        int incomePoints = customer.getMonthlyIncome().divide(new BigDecimal("500"), RoundingMode.FLOOR).intValue();
-        incomePoints = Math.min(incomePoints, 30);
+//        int agePoints = (customer.getAge() > 18) ? Math.min((customer.getAge() - 18) * 2, 20) : 0;
+//        int incomePoints = customer.getMonthlyIncome().divide(new BigDecimal("500"), RoundingMode.FLOOR).intValue();
+//        incomePoints = Math.min(incomePoints, 30);
 
         char lastDigit = customer.getCpf().charAt(customer.getCpf().length() - 1);
         int externalScoreMock = (lastDigit == '1' || lastDigit == '2') ? 200 : (lastDigit == '9' ? 900 : 600);
         int externalDebtPenalty = (lastDigit == '1' || lastDigit == '2') ? 60 : 0;
         int externalScorePoints = (externalScoreMock / 100) * 5;
 
-        int totalScore = 30 + agePoints + incomePoints + externalScorePoints - externalDebtPenalty;
-        if (totalScore > 100) return 100;
-        if (totalScore < 0) return 0;
-        return totalScore;
+//        int totalScore = 30 + agePoints + incomePoints + externalScorePoints - externalDebtPenalty;
+        //if (totalScore > 100) return 100;
+      //if (totalScore < 0) return 0;
+      return 0;
     }
 
     public RiskTier determineRisk(int score) {

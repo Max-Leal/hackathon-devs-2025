@@ -61,6 +61,12 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <!-- Bcrypt -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+        </dependency>
         
         <!-- TESTES (Essa única dependência substitui todas as -test que vc criou) -->
         <dependency>
