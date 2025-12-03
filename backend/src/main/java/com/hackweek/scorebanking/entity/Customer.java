@@ -18,6 +18,9 @@ public class Customer {
   private String fullName;
 
   @Column(nullable = false)
+  private Integer age;
+
+  @Column(nullable = false)
   private String email;
 
   @Column(nullable = false)

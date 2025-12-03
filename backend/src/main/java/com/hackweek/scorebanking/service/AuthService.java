@@ -24,6 +24,7 @@ public class AuthService {
 
     Customer customer = new Customer();
     customer.setFullName(registerDto.fullName());
+    customer.setAge(registerDto.age());
     customer.setEmail(registerDto.email());
     customer.setPassword(encoder.encode(registerDto.password()));
     customer.setCpf(registerDto.cpf());

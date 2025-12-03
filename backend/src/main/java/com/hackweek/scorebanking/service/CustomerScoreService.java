@@ -43,12 +43,13 @@ public class CustomerScoreService {
         // Se a entidade Customer tiver o setScoreData, use também: customer.setScoreData(scoreData);
 
         // 3. Atualiza com os dados do JSON (DTO)
-        scoreData.setAge(request.age());
         scoreData.setProfession(request.profession());
         scoreData.setMonthlyIncome(request.monthlyIncome());
         scoreData.setDependents(request.dependents());
         scoreData.setEducationLevel(request.educationLevel());
         scoreData.setHousingStatus(request.housingStatus());
+
+        scoreData.setAge(customer.getAge());
 
         // 4. ENRIQUECIMENTO (SIMULAÇÃO) - Preenche fraude/dívida
         enrichWithMockData(scoreData, customer.getCpf());
