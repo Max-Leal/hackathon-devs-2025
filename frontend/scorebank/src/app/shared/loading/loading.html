@@ -1,0 +1,20 @@
+<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center z-100 bg-white transition-opacity duration-300">
+  <div class="flex flex-col items-center justify-center">
+    
+    <div class="animate-spin-slow">
+      <img 
+        src="/assets/logo_2.png" 
+        alt="Carregando..." 
+        class="h-24 w-24"
+      >
+    </div>
+
+    <p class="mt-8 text-xl font-semibold text-gray-800 transition-all duration-500 h-6">
+      {{ currentPhrase }}
+    </p>
+    
+    <p class="mt-2 text-sm text-[#356859] font-medium">
+      Aguarde!
+    </p>
+  </div>
+</div>
