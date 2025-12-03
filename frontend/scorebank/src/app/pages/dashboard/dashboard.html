@@ -1,0 +1,167 @@
+<div class="min-h-screen bg-gray-50 font-sans pb-10">
+  
+  <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
+    <div class="max-w-3xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-2">
+         <img src="/assets/logo_2.png" alt="Logo" class="h-8 w-auto">
+         <span class="font-bold text-gray-700">Score Banking</span>
+      </div>
+      <button (click)="logout()" class="text-sm text-gray-500 hover:text-[#319F86]">
+        Sair
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto p-4 space-y-6">
+
+    <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+      <div class="flex items-start gap-4">
+        <div class="p-2 bg-blue-50 rounded-full text-blue-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="font-bold text-gray-800 text-lg">Nível de Confiança</h2>
+          <p class="text-sm text-gray-500">Como a fintech te vê</p>
+        </div>
+      </div>
+
+      <div class="flex flex-col items-center justify-center mt-6 mb-4">
+        <div class="relative h-32 w-32 rounded-full flex items-center justify-center"
+             [style.background]="'conic-gradient(#319F86 ' + dashboardData.trustLevel + '%, #e5e7eb 0deg)'">
+          <div class="absolute h-28 w-28 bg-white rounded-full flex flex-col items-center justify-center">
+            <span class="text-2xl font-bold text-gray-800">{{ dashboardData.trustLevel }}</span>
+            <span class="text-xs text-gray-500">{{ dashboardData.trustLabel }}</span>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400 mt-4 text-center px-4">
+          Seu nível de confiança é calculado com base no seu histórico de pagamentos, renda e comportamento financeiro.
+        </p>
+      </div>
+      
+      <div class="w-full bg-gray-100 rounded-full h-2 mt-2">
+        <div class="bg-[#319F86] h-2 rounded-full" [style.width.%]="dashboardData.trustLevel"></div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm p-1 border border-gray-100">
+      <div class="p-4 flex items-center gap-3">
+        <div class="p-2 bg-green-50 rounded-full text-[#319F86]">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="font-bold text-gray-800">Crédito Pré-Aprovado</h2>
+          <p class="text-xs text-gray-500">Disponível para uso</p>
+        </div>
+      </div>
+
+      <div class="bg-[#319F86] rounded-xl p-6 text-white mx-2 mb-2 shadow-inner">
+        <p class="text-sm opacity-90 mb-1">Limite disponível</p>
+        <p class="text-3xl font-bold mb-4">{{ dashboardData.creditLimit | currency:'BRL' }}</p>
+        
+        <div class="flex items-center gap-2 text-xs font-medium bg-white/20 w-fit px-3 py-1 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+          Aumentou {{ dashboardData.limitIncrease | currency:'BRL' }} nos últimos 3 meses
+        </div>
+      </div>
+      
+      <div class="px-6 py-2 flex items-start gap-2">
+        <span class="text-yellow-500 text-lg">💡</span>
+        <p class="text-xs text-gray-500 pt-1">
+          <span class="font-bold text-gray-700">Dica:</span> Continue pagando suas contas em dia para aumentar ainda mais seu limite!
+        </p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="p-2 bg-purple-50 rounded-full text-purple-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="font-bold text-gray-800">Score de Crédito</h2>
+          <p class="text-xs text-gray-500">Sua pontuação oficial</p>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-end mb-2">
+        <div>
+          <span class="text-2xl font-bold text-gray-800">{{ dashboardData.score }}</span>
+          <span class="text-sm text-gray-500"> pontos</span>
+        </div>
+        <div class="text-right">
+          <p class="text-xs text-gray-500">Classificação</p>
+          <p class="font-bold text-[#319F86]">{{ dashboardData.scoreClassification }}</p>
+        </div>
+      </div>
+
+      <div class="relative h-3 w-full rounded-full bg-linear-to-r from-red-400 via-yellow-400 to-green-500 mb-2">
+        <div class="absolute top-1/2 -translate-y-1/2 w-5 h-5 bg-white border-4 border-blue-500 rounded-full shadow-md"
+             [style.left.%]="(dashboardData.score / dashboardData.scoreMax) * 100">
+        </div>
+      </div>
+      <div class="flex justify-between text-xs text-gray-400 font-medium">
+        <span>0</span>
+        <span>100</span>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+      <div class="flex items-center gap-3 mb-8">
+        <div class="p-2 bg-orange-50 rounded-full text-orange-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="font-bold text-gray-800">Histórico Financeiro</h2>
+          <p class="text-xs text-gray-500">Eventos que impactaram seu perfil</p>
+        </div>
+      </div>
+
+      <div class="space-y-8 pl-2">
+        
+        <div *ngFor="let item of financialHistory" class="relative pl-8 border-l-2" 
+             [ngClass]="item.type === 'positive' ? 'border-[#319F86]' : 'border-red-500'">
+          
+          <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 bg-white flex items-center justify-center"
+               [ngClass]="item.type === 'positive' ? 'border-[#319F86]' : 'border-red-500'">
+            <svg *ngIf="item.type === 'positive'" class="w-2.5 h-2.5 text-[#319F86]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
+            </svg>
+            <span *ngIf="item.type !== 'positive'" class="text-[10px] font-bold text-red-500">!</span>
+          </div>
+
+          <div class="mb-1">
+            <h3 class="text-sm font-bold text-gray-800">{{ item.title }}</h3>
+            <span class="text-xs text-gray-400 block">{{ item.date }}</span>
+          </div>
+          
+          <p class="text-sm text-gray-500 mb-3">{{ item.description }}</p>
+
+          <div class="flex flex-wrap gap-2">
+            <span *ngFor="let tag of item.tags" 
+                  class="px-2 py-1 rounded text-[10px] font-bold"
+                  [ngClass]="{
+                    'bg-green-100 text-green-700': tag.color === 'green',
+                    'bg-blue-100 text-blue-700': tag.color === 'blue',
+                    'bg-purple-100 text-purple-700': tag.color === 'purple',
+                    'bg-red-100 text-red-700': tag.color === 'red'
+                  }">
+              {{ tag.label }}
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
