@@ -1,13 +1,16 @@
 FROM node:20-alpine
 
+# Define a raiz do container
 WORKDIR /app
 
 RUN npm install -g @angular/cli
 
-COPY ./app/package*.json ./  
+COPY scorebank/package*.json ./
+
 RUN npm install
 
-COPY ./app ./              
+# Copia o resto do código fonte também para a raiz
+COPY ./scorebank/ .
 
 EXPOSE 4200
 
