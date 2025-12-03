@@ -25,9 +25,7 @@ public class CustomerScoreController {
     this.scoreService = scoreService;
   }
 
-  // ------------------------------
-  // 1️⃣ Registrar os dados de score do cliente
-  // ------------------------------
+
   @PostMapping("/{id}/score")
   public ScoreResultResponse createOrUpdateScoreData(
           @PathVariable Long id,
@@ -36,7 +34,6 @@ public class CustomerScoreController {
     Customer customer = customerRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
-    // Se não existir score, cria
     CustomerScoreData scoreData = scoreRepository.findByCustomerId(id)
             .orElse(new CustomerScoreData());
 
@@ -50,7 +47,6 @@ public class CustomerScoreController {
 
     scoreRepository.save(scoreData);
 
-    // Agora calcula o score
     return scoreService.calculateCustomerScore(id);
   }
 }

@@ -14,3 +14,4 @@ public record CreditAnalysisResponseDto(
         String message,
         LocalDateTime date
 ) {}
+

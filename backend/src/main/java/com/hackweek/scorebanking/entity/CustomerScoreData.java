@@ -13,26 +13,33 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class CustomerScoreData {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  private Integer age;
+    // --- DADOS OBRIGATÓRIOS DO DESAFIO ---
+    private Integer age;
+    private BigDecimal monthlyIncome;
+    private Integer creditScore; // Score Serasa
 
-  private String profession;
+    @Column(name = "external_debt")
+    private BigDecimal externalDebt;
 
-  private BigDecimal monthlyIncome;
+    @Column(name = "fraud_suspicion")
+    private Boolean fraudSuspicion;
 
-  private Integer dependents;
+    // --- DADOS OPCIONAIS DO DESAFIO ---
+    private String profession;
 
-  private String educationLevel;
+    // "inovação" pra evitar que um monte de bot comece a criar conta
+    private Long registrationTimeSeconds; 
 
-  private String housingStatus;
+    private Integer dependents;
+    private String educationLevel;
+    private String housingStatus;
 
-  private Integer creditScore;
-
-  @OneToOne
-  @JoinColumn(name = "customer_id", nullable = false)
-  @JsonIgnore
-  private Customer customer;
+    @OneToOne
+    @JoinColumn(name = "customer_id", nullable = false)
+    @JsonIgnore
+    private Customer customer;
 }
