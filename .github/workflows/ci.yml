@@ -12,25 +12,8 @@ jobs:
 
     steps:
 
-    #   - name: Check
-    #     uses: actions/checkout@v4
-
-    #   - name: Scan Terraform with Checkov
-    #     uses: bridgecrewio/checkov-action@v12
-    #     with:
-    #       directory: ./modulo7-iac_tooling
-    #       soft_fail: true
-    #       #soft_fail: false
-
-    #   - name: Scan Geral do Repositório (Trivy)
-    #     uses: aquasecurity/trivy-action@master
-    #     with:
-    #       scan-type: 'fs'
-    #       scan-ref: './modulo7-iac_tooling'
-    #       scanners: 'vuln,misconfig,secret'
-    #       #exit-code: '1'
-    #       severity: 'HIGH,CRITICAL'
-    #       format: 'table'
+      - name: Check
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
