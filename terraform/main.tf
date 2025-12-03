@@ -5,7 +5,7 @@ module "ec2" {
   instance_name         = var.instance_name
   subnet_id             = module.network.scorebanking_subnet_id
   vpc_security_group_id = module.network.sgScorebanking_id
-  }
+}
 
 module "network" {
   source              = "./modules/network"
