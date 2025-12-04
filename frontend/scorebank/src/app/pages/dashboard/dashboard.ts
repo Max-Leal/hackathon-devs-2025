@@ -1,14 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { DataService } from '../../services/data.service';
+import { HttpClient } from '@angular/common/http';
 
-// Interface atualizada conforme sua imagem
-interface BackendResponse {
+interface CustomerResponse {
   customerId: number;
-  score: number;        // Ex: 60
-  riskTier: string;     // Ex: "MEDIUM"
-  approvedLimit: number; // Ex: 15896.27
+  score: number;
+  riskTier: string;
+  approvedLimit: number;
+  maxMonthlyInstallment: number;
+  maxInstallments: number;
+  interestRate: number;
+  feedback: string[];
+  scoreAudit: Array<{
+    attribute: string;
+    valueLog: string;
+    points: number;
+  }>;
 }
 
 @Component({
@@ -20,8 +28,10 @@ interface BackendResponse {
 })
 export class DashboardComponent implements OnInit {
 
-  //user = { fullName: '' };
-  user = { fullName: '' }
+  user = { fullName: '' };
+  
+  isLoading = true;
+  error = '';
 
   dashboardData = {
     trustLevel: 0, 
@@ -29,27 +39,106 @@ export class DashboardComponent implements OnInit {
     creditLimit: 0,
     limitIncrease: 0,
     score: 0, 
-    scoreMax: 100, // Régua visual vai até 100
-    scoreClassification: '...'
+    scoreMax: 100,
+    scoreClassification: '...',
+    maxMonthlyInstallment: 0,
+    maxInstallments: 0,
+    interestRate: 0
   };
 
+  feedback: string[] = [];
+  scoreAudit: any[] = [];
   financialHistory: any[] = [];
 
-  constructor(private router: Router, private dataService: DataService) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   ngOnInit(): void {
-    //this.user.fullName = this.dataService.user.fullName || 'Visitante';
+    const userId = localStorage.getItem('userId');
     this.user.fullName = localStorage.getItem('userName') || 'Visitante';
 
-    const result = this.dataService.analysisResult;
-
-    if (result) {
-      this.updateDashboardFromResponse(result);
-      this.setupHistory();
-      console.log("dados nao encontrados")
-    } else {
-      //this.router.navigate(['/signin']);
+    if (!userId) {
+      this.router.navigate(['/signin']);
+      return;
     }
+
+    this.loadCustomerData(userId);
+  }
+
+  loadCustomerData(customerId: string): void {
+    console.log(customerId)
+    this.http.get<CustomerResponse>(`http://localhost:8080/api/customers/${customerId}/dashboard`).subscribe({
+      next: (data) => {
+        console.log(data)
+        this.updateDashboardFromResponse(data);
+        this.setupHistory(data);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar dados:', err);
+        this.error = 'Erro ao carregar suas informações.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  updateDashboardFromResponse(data: CustomerResponse): void {
+    this.dashboardData.creditLimit = data.approvedLimit;
+    this.dashboardData.score = data.score;
+    this.dashboardData.trustLevel = data.score;
+    this.dashboardData.maxMonthlyInstallment = data.maxMonthlyInstallment;
+    this.dashboardData.maxInstallments = data.maxInstallments;
+    this.dashboardData.interestRate = data.interestRate * 100;
+    
+    this.dashboardData.scoreClassification = this.translateRisk(data.riskTier);
+    this.dashboardData.trustLabel = this.dashboardData.scoreClassification;
+    this.dashboardData.limitIncrease = data.approvedLimit * 0.10;
+    
+    this.feedback = data.feedback;
+    this.scoreAudit = data.scoreAudit;
+  }
+
+  private translateRisk(tier: string): string {
+    if (tier === 'LOW') return 'Excelente';
+    if (tier === 'MEDIUM') return 'Bom';
+    return 'Alto Risco';
+  }
+
+  private setupHistory(data: CustomerResponse) {
+    this.financialHistory = [
+      {
+        title: 'Análise de Crédito Concluída',
+        date: 'Hoje',
+        description: `Score calculado: ${data.score} pontos. Limite aprovado de ${this.formatCurrency(data.approvedLimit)}.`,
+        type: 'positive',
+        tags: [
+          { label: `Score: ${data.score}`, color: 'purple' },
+          { label: this.translateRisk(data.riskTier), color: this.getRiskColor(data.riskTier) }
+        ]
+      }
+    ];
+
+    // Adiciona eventos baseados no feedback
+    if (data.feedback.length > 0) {
+      data.feedback.forEach((item, index) => {
+        const isPositive = item.startsWith('✅');
+        this.financialHistory.push({
+          title: isPositive ? 'Ponto Positivo' : 'Atenção',
+          date: 'Hoje',
+          description: item.substring(2).trim(),
+          type: isPositive ? 'positive' : 'negative',
+          tags: [{ 
+            label: isPositive ? 'Favorável' : 'Ajuste Necessário', 
+            color: isPositive ? 'green' : 'blue' 
+          }]
+        });
+      });
+    }
+  }
+
+  private getRiskColor(tier: string): string {
+    if (tier === 'LOW') return 'green';
+    if (tier === 'MEDIUM') return 'blue';
+    return 'purple';
   }
 
   recalculate(): void {
@@ -63,41 +152,16 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/signin']);
   }
 
-  updateDashboardFromResponse(data: BackendResponse): void {
-    // Mapeia o Limite
-    this.dashboardData.creditLimit = data.approvedLimit;
-    
-    // Mapeia o Score (Backend 0-100 -> Visual 0-100)
-    // Se o backend manda 60, mostramos 600 na régua para ficar no meio
-    this.dashboardData.score = data.score; 
-    
-    // Mapeia o Nível de Confiança (Backend 0-100 -> Círculo 0-100)
-    // Usamos o valor original (60)
-    this.dashboardData.trustLevel = data.score;
-
-    // Traduz o RiskTier para Português
-    this.dashboardData.scoreClassification = this.translateRisk(data.riskTier);
-    this.dashboardData.trustLabel = this.dashboardData.scoreClassification;
-    
-    // Simulação visual de aumento
-    this.dashboardData.limitIncrease = data.approvedLimit * 0.10; 
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
   }
 
-  private translateRisk(tier: string): string {
-    if (tier === 'LOW') return 'Excelente';
-    if (tier === 'MEDIUM') return 'Bom';
-    return 'Alto Risco';
-  }
-
-  private setupHistory() {
-    this.financialHistory = [
-      {
-        title: 'Análise Concluída',
-        date: 'Hoje',
-        description: 'Perfil analisado com sucesso.',
-        type: 'positive', 
-        tags: [{ label: 'Limite Definido', color: 'green' }]
-      }
-    ];
+  getPointsColor(points: number): string {
+    if (points > 0) return 'text-green-600';
+    if (points < 0) return 'text-red-600';
+    return 'text-gray-600';
   }
 }
