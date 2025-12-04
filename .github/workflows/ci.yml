@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
@@ -34,14 +35,32 @@ jobs:
         id: apply
         run: make tf-apply
         working-directory: terraform
-      
-      - name: Publish Terraform Output
+        
+      - name: Publish Terraform Output & Expose URL
+        id: get_url
         run: |
           APP_URL=$(terraform output -raw app_url)
-                    
+          
+          # Publica no Job Summary
           echo "## 🔗 Link da Aplicação Deployada" >> $GITHUB_STEP_SUMMARY
           echo "**A sua aplicação está pronta!** Clique no link abaixo para acessá-la:" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "[**Acessar Aplicação**]($APP_URL)" >> $GITHUB_STEP_SUMMARY
           
+          # EXPOE a URL para ser usada em passos seguintes
+          echo "app_url=$APP_URL" >> $GITHUB_OUTPUT
+          
         working-directory: terraform
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/') # Só roda se o workflow foi disparado por um push de tag
+        uses: softprops/action-gh-release@v2
+        with:
+          body: |
+            ## 🎉 Novo Lançamento: Aplicação Implantada!
+            
+            O deploy da aplicação foi concluído com sucesso.
+            
+            Acesse a nova versão diretamente por este link:
+            
+            [**Acessar Aplicação**](${{ steps.get_url.outputs.app_url }})
