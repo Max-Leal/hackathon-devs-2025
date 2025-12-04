@@ -53,9 +53,10 @@ jobs:
         working-directory: terraform
 
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/') # Só roda se o workflow foi disparado por um push de tag
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: deploy-${{ github.sha }}
+          name: Deploy Automático | Commit ${{ github.sha }}
           body: |
             ## 🎉 Novo Lançamento: Aplicação Implantada!
             
