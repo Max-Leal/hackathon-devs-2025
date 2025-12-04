@@ -62,12 +62,17 @@ public class CustomerScoreService {
         int score = creditEngineService.calculateScore(scoreData);
         RiskTier riskTier = creditEngineService.determineRisk(score);
         BigDecimal approvedLimit = creditEngineService.calculateApprovedLimit(scoreData.getMonthlyIncome(), riskTier);
+        BigDecimal safeInstallment = creditEngineService.calculateMaxInstallment(scoreData.getMonthlyIncome());
+
+        int installments = (riskTier == RiskTier.TERRIBLE) ? 0 : riskTier.getMaxInstallments();
 
         return new ScoreResultResponse(
                 customer.getId(),
                 score,
                 riskTier,
-                approvedLimit
+                approvedLimit,
+                safeInstallment,
+                installments
         );
     }
 

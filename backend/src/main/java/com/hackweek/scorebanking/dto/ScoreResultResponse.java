@@ -7,5 +7,7 @@ public record ScoreResultResponse(
         Long customerId,
         int score,
         RiskTier riskTier,
-        BigDecimal approvedLimit
+        BigDecimal approvedLimit,
+        BigDecimal maxMonthlyInstallment,
+        Integer maxInstallments
 ) {}
