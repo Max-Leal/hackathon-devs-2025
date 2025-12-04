@@ -32,6 +32,9 @@ public class CreditEngineService {
         int serasaScore = data.getCreditScore() != null ? data.getCreditScore() : 0;
         int externalScorePoints = (serasaScore / 100) * 5; 
 
+        // 4. pontos por profissão
+        int professionPoints = calculateProfessionPoints(data.getProfession());
+
         // 5. PENALIDADE POR DÍVIDA
         // Regra: Se deve mais de R$ 1.000, perde 40 pontos na cabeça.
         int debtPenalty = 0;
@@ -44,7 +47,7 @@ public class CreditEngineService {
         // Base Score caiu para 25 (antes era 50).
         int baseScore = 25;
         
-        int totalScore = baseScore + incomePoints + externalScorePoints - debtPenalty;
+        int totalScore = baseScore + incomePoints + externalScorePoints + professionPoints - debtPenalty;
 
         // Trava entre 0 e 100
         return Math.max(0, Math.min(100, totalScore));
@@ -80,4 +83,34 @@ public class CreditEngineService {
         double pv = pmt * ((1 - Math.pow(1 + rate, -months)) / rate);
         return BigDecimal.valueOf(pv).setScale(2, RoundingMode.HALF_DOWN);
     }
+
+        
+    private int calculateProfessionPoints(String profession) {
+        if (profession == null) return 0;
+        
+        // Normaliza para minúsculo para facilitar a busca
+        String p = profession.toUpperCase().trim();
+
+        // GRUPO 1: ALTA ESTABILIDADE (+10)
+        if (p.equals("CONCURSADO") || p.equals("PÚBLICO") || p.equals("MILITAR") ||
+            p.equals("MÉDICO") || p.equals("JUIZ") || p.equals("CLT") || 
+            p.equals("POLICIAL")) {
+            return 10;
+        }
+
+        // GRUPO 2: RISCO VOLÁTIL (-5)
+        if (p.equals("AUTÔNOMO") || p.equals("FREELANCER") || p.equals("ESTUDANTE") || 
+            p.equals("ESTAGIÁRIO") || p.equals("UBER") || p.equals("MOTORISTA APP")) {
+            return -5;
+        }
+
+        // GRUPO 3: ALTO RISCO (-10)
+        if (p.equals("DESEMPREGADO") || p.equals("DO LAR") || p.isEmpty()) {
+            return -10;
+        }
+
+        return 0;
+    }
+
+
 }
