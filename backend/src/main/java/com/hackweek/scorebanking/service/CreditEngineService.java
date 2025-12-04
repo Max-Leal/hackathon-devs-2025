@@ -58,10 +58,19 @@ public class CreditEngineService {
         return RiskTier.TERRIBLE;
     }
 
+    
+    public BigDecimal calculateMaxInstallment(BigDecimal monthlyIncome) {
+        if (monthlyIncome == null) return BigDecimal.ZERO;
+        
+        // Retorna 30% da renda
+        return monthlyIncome.multiply(new BigDecimal("0.30"))
+                            .setScale(2, RoundingMode.HALF_DOWN);
+    }
+
     public BigDecimal calculateApprovedLimit(BigDecimal monthlyIncome, RiskTier risk) {
         if (risk == RiskTier.TERRIBLE || monthlyIncome == null) return BigDecimal.ZERO;
 
-        BigDecimal maxInstallmentValue = monthlyIncome.multiply(new BigDecimal("0.30"));
+        BigDecimal maxInstallmentValue = calculateMaxInstallment(monthlyIncome);
         double pmt = maxInstallmentValue.doubleValue();
         double rate = risk.getInterestRate().doubleValue();
         int months = risk.getMaxInstallments();
