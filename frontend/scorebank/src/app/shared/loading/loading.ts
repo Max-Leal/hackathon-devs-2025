@@ -5,18 +5,19 @@ import { CommonModule } from '@angular/common';
   selector: 'app-loading',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './loading.html',
-  styleUrls: ['./loading.css']
+  // Verifique se o nome do seu HTML é loading.html ou loading.component.html
+  // Se der erro de template, ajuste esta linha abaixo:
+  templateUrl: './loading.html', 
+  styleUrls: ['./loading.css'] 
 })
 export class LoadingComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isLoading: boolean = false;
   
-
+  // === AQUI ESTAVA FALTANDO ===
+  // Permite receber frases personalizadas de outros componentes
   @Input() phrases: string[] = [
-    "Consultando Serasa...",
-    "Calculando Risco...",
-    "Verificando Renda...",
-    "Validando Indícios de Fraude..."
+    "Processando...",
+    "Aguarde um momento..."
   ];
 
   @Output() loadingComplete = new EventEmitter<void>();
@@ -35,13 +36,14 @@ export class LoadingComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Se a lista de frases mudou, atualiza a frase atual imediatamente
+    // Se a lista de frases mudou (veio do pai), atualiza a frase atual
     if (changes['phrases'] && !changes['phrases'].firstChange) {
       if (this.phrases.length > 0) {
         this.currentPhrase = this.phrases[0];
       }
     }
 
+    // Se o status de loading mudou
     if (changes['isLoading']) {
       if (changes['isLoading'].currentValue === true) {
         this.startLoadingProcess();
@@ -70,10 +72,9 @@ export class LoadingComponent implements OnInit, OnDestroy, OnChanges {
 
   private startPhraseCycle(): void {
     let index = 0;
-    // Reinicia o ciclo sempre que começa
+    // Garante que comece com a primeira frase
     this.currentPhrase = this.phrases[0];
     
-    // Só inicia o intervalo se tiver mais de uma frase
     if (this.phrases.length > 1) {
       this.phraseInterval = setInterval(() => {
         index = (index + 1) % this.phrases.length;

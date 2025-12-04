@@ -3,11 +3,14 @@ import { Home } from './pages/home/home';
 import { SigninComponent } from './pages/signin/signin';
 import { SignupComponent } from './pages/signup/signup';
 import { DashboardComponent } from './pages/dashboard/dashboard';
+import { SimulationComponent } from './pages/simulation/simulation';
 
 export const routes: Routes = [
-  { path: '', component: Home },
+  { path: '', component: Home, pathMatch: 'full' },
   { path: 'home', component: Home },
   { path: 'signin', component: SigninComponent },
   { path: 'signup', component: SignupComponent },
-  { path: 'dashboard', component: DashboardComponent }
+  { path: 'simulation', component: SimulationComponent },
+  { path: 'dashboard', component: DashboardComponent },
+  { path: '**', redirectTo: '' }
 ];

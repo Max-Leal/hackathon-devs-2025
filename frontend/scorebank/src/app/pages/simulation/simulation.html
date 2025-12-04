@@ -1,12 +1,18 @@
+<app-loading 
+  [isLoading]="isLoading" 
+  [phrases]="loadingPhrases"
+  (loadingComplete)="onLoadingComplete()">
+</app-loading>
+
 <div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
   <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
     
     <div class="text-center">
       <h2 class="text-3xl font-extrabold text-[#319F86]">
-        Crie sua conta
+        Simulação de Crédito
       </h2>
       <p class="mt-2 text-sm text-gray-700">
-        Passo 1 de 2: Dados de Acesso
+        Passo 2 de 2: Dados Financeiros
       </p>
     </div>
 
@@ -14,55 +20,40 @@
       
       <div class="rounded-md shadow-sm space-y-4">
         
-        <!-- Nome Completo -->
         <div>
-          <label for="fullName" class="block text-sm font-medium text-gray-700">Nome Completo</label>
-          <input id="fullName" name="fullName" type="text" required 
-            [(ngModel)]="formData.fullName"
+          <label class="block text-sm font-medium text-gray-700">Idade</label>
+          <input type="number" name="age" required [(ngModel)]="financialData.age"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-[#319F86] focus:border-[#319F86]" 
-            placeholder="Ex: Ronaldo Silva">
+            placeholder="Ex: 25">
         </div>
 
-        <!-- CPF -->
         <div>
-          <label for="cpf" class="block text-sm font-medium text-gray-700">CPF</label>
-          <input id="cpf" name="cpf" type="text" required 
-            [(ngModel)]="formData.cpf"
+          <label class="block text-sm font-medium text-gray-700">Renda Mensal (R$)</label>
+          <input type="number" name="monthlyIncome" required [(ngModel)]="financialData.monthlyIncome"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-[#319F86] focus:border-[#319F86]" 
-            placeholder="000.000.000-00">
+            placeholder="Ex: 5000.00">
         </div>
 
-        <!-- Email (NOVO CAMPO) -->
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-          <input id="email" name="email" type="email" required 
-            [(ngModel)]="formData.email"
+          <label class="block text-sm font-medium text-gray-700">Profissão</label>
+          <input type="text" name="profession" [(ngModel)]="financialData.profession"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-[#319F86] focus:border-[#319F86]" 
-            placeholder="seu@email.com">
+            placeholder="Ex: Desenvolvedor">
         </div>
 
-        <!-- Senha (NOVO CAMPO) -->
         <div>
-          <label for="password" class="block text-sm font-medium text-gray-700">Senha</label>
-          <input id="password" name="password" type="password" required 
-            [(ngModel)]="formData.password"
+          <label class="block text-sm font-medium text-gray-700">Dependentes</label>
+          <input type="number" name="dependents" [(ngModel)]="financialData.dependents"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-[#319F86] focus:border-[#319F86]" 
-            placeholder="******">
+            placeholder="Ex: 0">
         </div>
 
       </div>
 
       <button type="submit" 
         class="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#319F86] hover:bg-[#2b8c75] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#319F86] transition-colors">
-        Continuar para Simulação
+        Calcular Análise
       </button>
-      
-      <div class="text-center text-sm mt-4">
-        <span class="text-gray-700">Já tem uma conta? </span>
-        <button type="button" (click)="goToSignin()" class="font-medium text-[#319F86] hover:text-[#2b8c75] bg-transparent border-none cursor-pointer">
-          Entrar
-        </button>
-      </div>
 
     </form>
   </div>
