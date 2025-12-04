@@ -6,6 +6,7 @@ import com.hackweek.scorebanking.service.CustomerScoreService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+// manda pro front
 @RestController
 @RequestMapping("/api/customers")
 public class ScoreController {
