@@ -12,13 +12,13 @@ resource "aws_instance" "instance-scorebanking" {
     apt install -y docker.io git build-essential docker-compose
     systemctl start docker
     systemctl enable docker
-    systemctl start cron
-    
 
     cd /root
     git clone https://github.com/Max-Leal/hackathon-devs-2025.git
     cd ./hackathon-devs-2025
-    git checkout develop
+    git checkout main
+    chmod +x ./troca_ip.sh
+    ./troca_ip.sh
     make docker-build
     make docker-run      
   EOF
