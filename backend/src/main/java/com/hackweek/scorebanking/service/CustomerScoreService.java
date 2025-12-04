@@ -48,6 +48,7 @@ public class CustomerScoreService {
         scoreData.setDependents(request.dependents());
         scoreData.setEducationLevel(request.educationLevel());
         scoreData.setHousingStatus(request.housingStatus());
+        scoreData.setMonthsInCurrentJob(request.monthsInCurrentJob());
 
         scoreData.setAge(customer.getAge());
 
@@ -63,6 +64,7 @@ public class CustomerScoreService {
         RiskTier riskTier = creditEngineService.determineRisk(score);
         BigDecimal approvedLimit = creditEngineService.calculateApprovedLimit(scoreData.getMonthlyIncome(), riskTier);
         BigDecimal safeInstallment = creditEngineService.calculateMaxInstallment(scoreData.getMonthlyIncome());
+        BigDecimal rate = (riskTier == RiskTier.TERRIBLE) ? BigDecimal.ZERO : riskTier.getInterestRate();
 
         int installments = (riskTier == RiskTier.TERRIBLE) ? 0 : riskTier.getMaxInstallments();
 
@@ -72,7 +74,8 @@ public class CustomerScoreService {
                 riskTier,
                 approvedLimit,
                 safeInstallment,
-                installments
+                installments,
+                rate
         );
     }
 
@@ -83,10 +86,22 @@ public class CustomerScoreService {
              data.setFraudSuspicion(true); data.setExternalDebt(BigDecimal.ZERO); data.setCreditScore(0);
         } else if (lastDigit == '1') {
              data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("15000.00")); data.setCreditScore(250);
+        } else if(lastDigit == '2' ){
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("13000.00")); data.setCreditScore(600);
+        } else if(lastDigit == '3' ){
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("11000.00")); data.setCreditScore(600);
+        } else if(lastDigit == '4' ){
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("9000.00")); data.setCreditScore(600);
+        } else if(lastDigit == '5' ){
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("7000.00")); data.setCreditScore(600);
+        } else if(lastDigit == '6' ){
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("5000.00")); data.setCreditScore(600);
+        } else if(lastDigit == '7' ){
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("3000.00")); data.setCreditScore(600);
         } else if (lastDigit == '9') {
              data.setFraudSuspicion(false); data.setExternalDebt(BigDecimal.ZERO); data.setCreditScore(950);
         } else {
              data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("500.00")); data.setCreditScore(600);
-        }
-    }
+          }
+     }
 }

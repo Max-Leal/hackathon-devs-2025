@@ -9,5 +9,6 @@ public record ScoreResultResponse(
         RiskTier riskTier,
         BigDecimal approvedLimit,
         BigDecimal maxMonthlyInstallment,
-        Integer maxInstallments
+        Integer maxInstallments,
+        BigDecimal interestRate
 ) {}

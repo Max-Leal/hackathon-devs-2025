@@ -6,6 +6,7 @@ public record CustomerScoreDto(
         String profession,
         BigDecimal monthlyIncome,
         Integer dependents,
+        Integer monthsInCurrentJob,
         String educationLevel,
         String housingStatus
 ) {}
