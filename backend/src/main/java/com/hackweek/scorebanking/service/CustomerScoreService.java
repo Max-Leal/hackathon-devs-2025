@@ -4,12 +4,15 @@ import com.hackweek.scorebanking.domain.RiskTier;
 import com.hackweek.scorebanking.dto.CustomerScoreDto;
 import com.hackweek.scorebanking.repository.CustomerScoreDataRepository;
 import com.hackweek.scorebanking.dto.ScoreResultResponse;
+import com.hackweek.scorebanking.dto.ScoreCalculationResult; 
+import com.hackweek.scorebanking.dto.ScoreBreakdown;
 import com.hackweek.scorebanking.entity.Customer;
 import com.hackweek.scorebanking.entity.CustomerScoreData;
 import com.hackweek.scorebanking.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.math.BigDecimal;
 
 @Service
@@ -48,6 +51,7 @@ public class CustomerScoreService {
         scoreData.setDependents(request.dependents());
         scoreData.setEducationLevel(request.educationLevel());
         scoreData.setHousingStatus(request.housingStatus());
+        scoreData.setMonthsInCurrentJob(request.monthsInCurrentJob());
 
         scoreData.setAge(customer.getAge());
 
@@ -59,15 +63,29 @@ public class CustomerScoreService {
         scoreData = scoreDataRepository.save(scoreData); 
 
         // 6. CÁLCULO (Agora garantimos que scoreData tem dados mockados e ID)
-        int score = creditEngineService.calculateScore(scoreData);
+        ScoreCalculationResult calculation = creditEngineService.calculateDetailedScore(scoreData);
+        int score = calculation.totalScore();
+        List<ScoreBreakdown> audit = calculation.breakdown();
+        List<String> feedbackMessages = creditEngineService.generateFeedback(scoreData);
         RiskTier riskTier = creditEngineService.determineRisk(score);
         BigDecimal approvedLimit = creditEngineService.calculateApprovedLimit(scoreData.getMonthlyIncome(), riskTier);
+        BigDecimal safeInstallment = creditEngineService.calculateMaxInstallment(scoreData.getMonthlyIncome());
+        BigDecimal rate = (riskTier == RiskTier.TERRIBLE) ? BigDecimal.ZERO : riskTier.getInterestRate();
+
+        int installments = (riskTier == RiskTier.TERRIBLE) ? 0 : riskTier.getMaxInstallments();
+
+        //List<String> feedbackMessages = creditEngineService.generateFeedback(scoreData);
 
         return new ScoreResultResponse(
                 customer.getId(),
                 score,
                 riskTier,
-                approvedLimit
+                approvedLimit,
+                safeInstallment,
+                installments,
+                rate,
+                feedbackMessages,
+                audit
         );
     }
 
@@ -78,10 +96,22 @@ public class CustomerScoreService {
              data.setFraudSuspicion(true); data.setExternalDebt(BigDecimal.ZERO); data.setCreditScore(0);
         } else if (lastDigit == '1') {
              data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("15000.00")); data.setCreditScore(250);
+        } else if(lastDigit == '2' ){
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("13000.00")); data.setCreditScore(600);
+        } else if(lastDigit == '3' ){
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("11000.00")); data.setCreditScore(600);
+        } else if(lastDigit == '4' ){
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("9000.00")); data.setCreditScore(600);
+        } else if(lastDigit == '5' ){
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("7000.00")); data.setCreditScore(600);
+        } else if(lastDigit == '6' ){
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("5000.00")); data.setCreditScore(600);
+        } else if(lastDigit == '7' ){
+             data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("3000.00")); data.setCreditScore(600);
         } else if (lastDigit == '9') {
              data.setFraudSuspicion(false); data.setExternalDebt(BigDecimal.ZERO); data.setCreditScore(950);
         } else {
              data.setFraudSuspicion(false); data.setExternalDebt(new BigDecimal("500.00")); data.setCreditScore(600);
-        }
-    }
+          }
+     }
 }

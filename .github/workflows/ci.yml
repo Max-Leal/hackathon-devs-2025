@@ -34,3 +34,14 @@ jobs:
         id: apply
         run: make tf-apply
         working-directory: terraform
+      
+      - name: Publish Terraform Output
+        run: |
+          APP_URL=$(terraform output -raw app_url)
+                    
+          echo "## 🔗 Link da Aplicação Deployada" >> $GITHUB_STEP_SUMMARY
+          echo "**A sua aplicação está pronta!** Clique no link abaixo para acessá-la:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "[**Acessar Aplicação**]($APP_URL)" >> $GITHUB_STEP_SUMMARY
+          
+        working-directory: terraform
