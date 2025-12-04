@@ -60,21 +60,24 @@ public class CustomerScoreService {
 
         // 5. SALVA TUDO ANTES DE CALCULAR
         // Como estamos dentro de um @Transactional, esse save é visível imediatamente para as próximas linhas
-        scoreData = scoreDataRepository.save(scoreData); 
-
-        // 6. CÁLCULO (Agora garantimos que scoreData tem dados mockados e ID)
-        ScoreCalculationResult calculation = creditEngineService.calculateDetailedScore(scoreData);
+        ScoreCalculationResult calculation = creditEngineService.calculateDetailedScore(scoreData);    
         int score = calculation.totalScore();
-        List<ScoreBreakdown> audit = calculation.breakdown();
-        List<String> feedbackMessages = creditEngineService.generateFeedback(scoreData);
+        List<ScoreBreakdown> audit = calculation.breakdown(); 
+
+        // 6. FINALIZAÇÃO (Cálculo de Limites e Tier)
         RiskTier riskTier = creditEngineService.determineRisk(score);
         BigDecimal approvedLimit = creditEngineService.calculateApprovedLimit(scoreData.getMonthlyIncome(), riskTier);
         BigDecimal safeInstallment = creditEngineService.calculateMaxInstallment(scoreData.getMonthlyIncome());
+        int installments = (riskTier == RiskTier.TERRIBLE) ? 0 : riskTier.getMaxInstallments();
         BigDecimal rate = (riskTier == RiskTier.TERRIBLE) ? BigDecimal.ZERO : riskTier.getInterestRate();
 
-        int installments = (riskTier == RiskTier.TERRIBLE) ? 0 : riskTier.getMaxInstallments();
+        scoreData.setLastCalculatedScore(score);
+        scoreData.setLastRiskTier(riskTier);
+        scoreData.setLastApprovedLimit(approvedLimit);
+        
+        scoreDataRepository.save(scoreData); 
 
-        //List<String> feedbackMessages = creditEngineService.generateFeedback(scoreData);
+        List<String> feedbackMessages = creditEngineService.generateFeedback(scoreData);
 
         return new ScoreResultResponse(
                 customer.getId(),
