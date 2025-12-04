@@ -75,7 +75,7 @@ public class CustomerScoreService {
         int installments = (riskTier == RiskTier.TERRIBLE) ? 0 : riskTier.getMaxInstallments();
 
         //List<String> feedbackMessages = creditEngineService.generateFeedback(scoreData);
-
+ 
         return new ScoreResultResponse(
                 customer.getId(),
                 score,
