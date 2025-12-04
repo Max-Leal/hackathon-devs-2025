@@ -1,6 +1,7 @@
 package com.hackweek.scorebanking.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hackweek.scorebanking.domain.RiskTier;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,6 +41,16 @@ public class CustomerScoreData {
     private Integer dependents;
     private String educationLevel;
     private String housingStatus;
+
+    @Column(name = "last_calculated_score")
+    private Integer lastCalculatedScore;
+
+    @Column(name = "last_risk_tier")
+    @Enumerated(EnumType.STRING)
+    private RiskTier lastRiskTier;      
+
+    @Column(name = "last_approved_limit")
+    private BigDecimal lastApprovedLimit; 
 
     @OneToOne
     @JoinColumn(name = "customer_id", nullable = false)
