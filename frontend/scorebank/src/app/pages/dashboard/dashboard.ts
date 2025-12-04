@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -50,7 +50,12 @@ export class DashboardComponent implements OnInit {
   scoreAudit: any[] = [];
   financialHistory: any[] = [];
 
-  constructor(private router: Router, private http: HttpClient) {}
+  // No construtor
+  constructor(
+    private router: Router, 
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     const userId = localStorage.getItem('userId');
@@ -64,6 +69,7 @@ export class DashboardComponent implements OnInit {
     this.loadCustomerData(userId);
   }
 
+  // No método loadCustomerData
   loadCustomerData(customerId: string): void {
     console.log(customerId)
     this.http.get<CustomerResponse>(`http://localhost:8080/api/customers/${customerId}/dashboard`).subscribe({
@@ -72,29 +78,35 @@ export class DashboardComponent implements OnInit {
         this.updateDashboardFromResponse(data);
         this.setupHistory(data);
         this.isLoading = false;
+        this.cdr.detectChanges(); // ← Força a detecção de mudanças
       },
       error: (err) => {
         console.error('Erro ao carregar dados:', err);
         this.error = 'Erro ao carregar suas informações.';
         this.isLoading = false;
+        this.cdr.detectChanges(); // ← Também aqui
       }
     });
   }
 
   updateDashboardFromResponse(data: CustomerResponse): void {
-    this.dashboardData.creditLimit = data.approvedLimit;
-    this.dashboardData.score = data.score;
-    this.dashboardData.trustLevel = data.score;
-    this.dashboardData.maxMonthlyInstallment = data.maxMonthlyInstallment;
-    this.dashboardData.maxInstallments = data.maxInstallments;
-    this.dashboardData.interestRate = data.interestRate * 100;
-    
-    this.dashboardData.scoreClassification = this.translateRisk(data.riskTier);
-    this.dashboardData.trustLabel = this.dashboardData.scoreClassification;
-    this.dashboardData.limitIncrease = data.approvedLimit * 0.10;
-    
-    this.feedback = data.feedback;
-    this.scoreAudit = data.scoreAudit;
+  // Crie um novo objeto em vez de modificar propriedades individuais
+    this.dashboardData = {
+      ...this.dashboardData,
+      creditLimit: data.approvedLimit,
+      score: data.score,
+      trustLevel: data.score,
+      maxMonthlyInstallment: data.maxMonthlyInstallment,
+      maxInstallments: data.maxInstallments,
+      interestRate: data.interestRate * 100,
+      scoreClassification: this.translateRisk(data.riskTier),
+      trustLabel: this.translateRisk(data.riskTier),
+      limitIncrease: data.approvedLimit * 0.10
+    };
+  
+    // Reatribua os arrays também
+    this.feedback = [...data.feedback];
+    this.scoreAudit = [...data.scoreAudit];
   }
 
   private translateRisk(tier: string): string {
