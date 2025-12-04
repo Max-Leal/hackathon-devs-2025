@@ -2,80 +2,62 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LoadingComponent } from '../../shared/loading/loading'; 
+import { DataService } from '../../shared/loading/data.service';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, LoadingComponent, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './signup.html',
   styleUrls: ['./signup.css']
 })
-// Mudei o nome para SignupComponent para evitar erros no arquivo de rotas
 export class SignupComponent implements OnInit {
-goToSignin(): void {
-    this.router.navigate(['/signin']);
-  }
-
-  // Controla a visibilidade do loading
-  isLoading: boolean = false;
-  
-  // Controla quais frases aparecem
+  isLoading = false;
   currentPhrases: string[] = [];
-
-  // Variável para saber em qual estágio estamos ('INTRO' ou 'ANALYSIS')
   loadingStage: 'INTRO' | 'ANALYSIS' = 'INTRO';
 
-  // Dados do formulário
   formData = {
-    name: '',
+    fullName: '',
     cpf: '',
-    age: null,
-    income: null,
-    profession: ''
+    email: '',
+    password: ''
   };
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private data: DataService) {}
 
   ngOnInit(): void {
-    // === LOADING DE ENTRADA (UX) ===
     this.loadingStage = 'INTRO';
     this.currentPhrases = ["Vamos criar sua conta..."];
-    this.isLoading = true; 
+    this.isLoading = false;
   }
 
-  // Chamado quando o usuário clica no botão "Solicitar Análise"
   onSubmit(): void {
-    // Validação Simples
-    if (!this.formData.name || !this.formData.cpf || !this.formData.age || !this.formData.income) {
-      alert('Por favor, preencha todos os campos obrigatórios.');
+    if (!this.formData.fullName || !this.formData.cpf || !this.formData.email || !this.formData.password) {
+      alert('Preencha todos os campos para continuar.');
       return;
     }
 
-    console.log("Dados capturados:", this.formData);
+    this.data.setUserData(this.formData);
+    this.isLoading = true;
 
-    // === LOADING DE ANÁLISE ===
-    this.loadingStage = 'ANALYSIS';
-    this.currentPhrases = [
-      "Consultando Serasa...", 
-      "Calculando Risco...", 
-      "Verificando Renda...",
-      "Gerando Oferta..."
-    ];
-    this.isLoading = true; // Ativa o loading e esconde o formulário
+    this.data.register(this.formData).subscribe({
+      next: () => {
+        this.isLoading = false;
+        // Após registrar, vá para o signin para fazer login
+        this.router.navigate(['/signin']);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        alert(err?.error ?? 'Erro ao registrar.');
+      }
+    });
   }
 
-  // Chamado automaticamente quando o tempo do loading (2.5s) acaba
   onLoadingComplete(): void {
-    this.isLoading = false; // Esconde o loading
+    this.isLoading = false;
+  }
 
-    if (this.loadingStage === 'INTRO') {
-      // Apenas libera o formulário para o usuário preencher
-    } 
-    else if (this.loadingStage === 'ANALYSIS') {
-      // Simulação: Análise concluída, vai para o dashboard
-      console.log("Análise finalizada! Redirecionando...");
-      this.router.navigate(['/dashboard']);
-    }
+  goToSignin(): void {
+    this.router.navigate(['/signin']);
   }
 }

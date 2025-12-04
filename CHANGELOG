@@ -1,0 +1,131 @@
+# Changelog
+
+## v3.0.5 - 2025-12-04
+
+- De certo pfv
+- fix: espero eu que agora o merge saia certo
+
+
+## v3.0.4 - 2025-12-04
+
+- Confia, tá enviando só falta o front
+- contagem dos pontos funcionando
+- Interest rate e calculos corretos agora
+- agora está somando corretamente
+
+
+## v3.0.3 - 2025-12-04
+
+- Merge bem sucedido, quase caguei tudo e mandei pro main KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
+- feat: calculo devolve parcelas e limite máximo de cada uma
+
+
+## v3.0.2 - 2025-12-04
+
+- Merge pull request #26 from Max-Leal/feature/simulation-flow
+- feat(api): integra fluxo de simulação com endpoint real e ajusta modelos de dados e implementação de pagina para complemento de cadastro(simulation)
+
+
+## v3.0.1 - 2025-12-04
+
+- Merge pull request #25 from Max-Leal/main
+
+
+## v3.0.0 - 2025-12-04
+
+- Merge pull request #24 from Max-Leal/develop
+
+
+## v2.0.2 - 2025-12-04
+
+- Merge branch 'main' into develop
+- docs: update changelog for v2.0.0
+- Merge pull request #23 from Max-Leal/develop
+
+
+## v2.0.1 - 2025-12-03
+
+- Arrumando deploy na aws pelo ci na main
+
+
+## v1.0.3 - 2025-12-03
+
+- Atualizado arquivo de ci
+
+
+## v1.0.2 - 2025-12-03
+
+- Teste actions 2
+
+
+## v1.0.1 - 2025-12-03
+
+- teste actions
+
+
+## v1.0.0 - 2025-12-03
+
+- Merge pull request #22 from Max-Leal/feature/actions
+- Adicionado para so funcionar apenas com branch develop e main
+- Adicionado github actions para auto-tag
+- fix: colocado check
+- Arrumando makefile para funcionar comandos do terraform
+- Adicionado um workflow para lancar o projeto na aws
+- Merge pull request #21 from Max-Leal/hotfix/cron
+- Removido script do cron
+- Merge pull request #20 from Max-Leal/hotfix/cron
+- Removido atividade cron
+- Merge pull request #19 from Max-Leal/feature/cronie-task
+- Adicionado uma cron task
+- Merge pull request #18 from Max-Leal/user-account
+- fix: usuário precisa por idade antes de registrar também
+- Merge pull request #17 from Max-Leal/feature/dashboard-page
+- Merge pull request #16 from Max-Leal/feature/terraform
+- Arrumado docker-compose e rodando na develop
+- fix: outputs e testando na branch feature/terraform
+- fix: finalmente adicao de usuarios e calculo do score funciona 👍
+- Formatando arquivos terraform e user_data
+- Adicionado infraestrutura em terraform: ec2, sg e subnet
+- fix: adicionar e dar score para os clientes
+- feat: mais lógica no service
+- Adicionando gitignore para n puxar arquivos extras do terraform
+- Adicionando backend no terraform
+- Merge pull request #15 from Max-Leal/feature/makefile
+- feat: Makefile basico inicial
+- feat(backend): endpoint para calcular o score do cliente, dados são passados depois de criar o usuario
+- feat(backend): criado sistema de login bem simples
+- feat(dashboard): implementa tela de resultados com dados simulados, gráficos e histórico financeiro
+- Merge pull request #14 from Max-Leal/feature/loading-page-ux
+- fix: restore Dockerfile deleted by mistake
+- feat(ux): implementa componente de carregamento global com branding e configuração de assets
+- Merge pull request #13 from Max-Leal/hotfix/dockerfile-frontend
+- fix nos diretorios e volumes do build frontend
+- Merge remote-tracking branch 'origin/hotfix/reestruturacao-front' into develop
+- feat(backend): correção no import de alguns arquivos e nos nome das pastas no docker compose
+- Criação da home
+- Merge pull request #12 from Max-Leal/feature/implementacao-docker
+- Criacao Dockerfile do backend e adaptacao das properties para o banco postgres
+- Criacao Dockerfile para subir banco de dados com init.sql
+- Merge pull request #11 from Max-Leal/develop
+- Merge pull request #10 from Max-Leal/feature/adicao-das-excecoes-do-código
+- feat: configurado no properties
+- Merge pull request #9 from Max-Leal/feature/implementacao-docker
+- Merge pull request #8 from Max-Leal/feature/adicao-das-excecoes-do-código
+- feat: adicionado mais classes bases para o back
+- feat: adicionado excecoes do back
+- Merge pull request #7 from Max-Leal/feature/banco-de-dados-criado
+- Criação dockerfile para o angular
+- feat: criado o banco de dados
+- Reestruturação do projeto Angular com Tailwind
+- Merge pull request #6 from Max-Leal/feature/implementando-pasta-backend
+- feat: adicionado pastas e arquivos base para o back
+- Merge pull request #5 from Max-Leal/feature/implementando-pasta-backend
+- hotfix: re-implementando backend em maven
+- Merge pull request #4 from Max-Leal/feature/implementando-pasta-backend
+- feat: implementação do backend
+- Merge pull request #2 from Max-Leal/feature/setup-angular
+- feat(frontend): instalaão e configuração Tailwind
+- Configuração inicial de uma aplicação Angular
+- Merge pull request #1 from Max-Leal/feature/organizacao-pastas
+- feat: organização das pastas de backend, frontend e database
+- Initial commit
