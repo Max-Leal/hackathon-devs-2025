@@ -19,10 +19,11 @@ export interface FinancialData {
 @Injectable({
   providedIn: 'root'
 })
+
 export class DataService {
   
-  // Ajuste a porta se o seu backend não for 8080
-  private readonly API_URL = 'http://localhost:8080/api/credit-analysis'; 
+  id = localStorage.getItem('userId')
+  private readonly API_URL = `http://localhost:8080/customers/${this.id}/score`; 
 
   user: UserData = { fullName: '', cpf: '', email: '', password: '' };
   financial: FinancialData = { age: null, monthlyIncome: null, profession: '', dependents: null };
