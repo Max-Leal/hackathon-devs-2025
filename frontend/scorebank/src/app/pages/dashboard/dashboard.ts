@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { DataService } from '../../shared/loading/data.service';
+import { DataService } from '../../services/data.service';
 
 // Interface atualizada conforme sua imagem
 interface BackendResponse {
@@ -20,7 +20,8 @@ interface BackendResponse {
 })
 export class DashboardComponent implements OnInit {
 
-  user = { fullName: '' };
+  //user = { fullName: '' };
+  user = { fullName: '' }
 
   dashboardData = {
     trustLevel: 0, 
@@ -37,15 +38,17 @@ export class DashboardComponent implements OnInit {
   constructor(private router: Router, private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.user.fullName = this.dataService.user.fullName || 'Visitante';
+    //this.user.fullName = this.dataService.user.fullName || 'Visitante';
+    this.user.fullName = localStorage.getItem('userName') || 'Visitante';
 
     const result = this.dataService.analysisResult;
 
     if (result) {
       this.updateDashboardFromResponse(result);
       this.setupHistory();
+      console.log("dados nao encontrados")
     } else {
-      this.router.navigate(['/signin']);
+      //this.router.navigate(['/signin']);
     }
   }
 
@@ -54,6 +57,9 @@ export class DashboardComponent implements OnInit {
   }
 
   logout(): void {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
     this.router.navigate(['/signin']);
   }
 
