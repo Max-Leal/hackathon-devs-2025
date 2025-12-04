@@ -13,10 +13,12 @@ export class AuthGuard implements CanActivate {
 
   canActivate(): boolean {
     if (this.auth.isLogged()) {
+      console.log("Login feito")
       return true;
     }
 
     this.router.navigate(['/login']);
+    console.log("Login nao efetuado")
     return false;
   }
 }

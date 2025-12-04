@@ -24,7 +24,7 @@ register(data: any): Observable<any> {
 
   setUserData(user: any): void {
     localStorage.setItem('userId', user.id);
-    localStorage.setItem('userName', user.nome || user.name || user.fullName);
+    localStorage.setItem('userName', user.name || user.fullName);
     localStorage.setItem('userEmail', user.email);
   }
 
@@ -39,6 +39,8 @@ register(data: any): Observable<any> {
 
   // Verificar se está logado
   isLogged(): boolean {
+    console.log(localStorage.getItem('userId'))
+    //return true;
     return !!localStorage.getItem('userId');
   }
 

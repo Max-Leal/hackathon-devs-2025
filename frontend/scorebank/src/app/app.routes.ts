@@ -12,6 +12,7 @@ export const routes: Routes = [
   { path: 'signin', component: SigninComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'simulation', component: SimulationComponent },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] }, // rota protegida
+  //{ path: 'dashboard', component: DashboardComponent },
   { path: '**', redirectTo: '' }
 ];

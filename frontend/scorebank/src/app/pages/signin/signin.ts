@@ -49,8 +49,8 @@ export class SigninComponent {
         // Redirecionar para o dashboard
         setTimeout(() => {
           console.log('Redirecionando...');
-          this.router.navigate(['/']);
-        }, 2000);
+          this.router.navigate(['/dashboard']);
+        }, 1500);
       },
       error: (err) => {
         if (err.status === 401) {
