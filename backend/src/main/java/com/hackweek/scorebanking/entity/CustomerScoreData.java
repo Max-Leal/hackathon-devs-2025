@@ -31,6 +31,9 @@ public class CustomerScoreData {
     // --- DADOS OPCIONAIS DO DESAFIO ---
     private String profession;
 
+    @Column(name = "months_in_current_job")
+    private Integer monthsInCurrentJob;
+
     // "inovação" pra evitar que um monte de bot comece a criar conta
     private Long registrationTimeSeconds; 
 

@@ -1,5 +1,31 @@
 # Changelog
 
+## v3.0.5 - 2025-12-04
+
+- De certo pfv
+- fix: espero eu que agora o merge saia certo
+
+
+## v3.0.4 - 2025-12-04
+
+- Confia, tá enviando só falta o front
+- contagem dos pontos funcionando
+- Interest rate e calculos corretos agora
+- agora está somando corretamente
+
+
+## v3.0.3 - 2025-12-04
+
+- Merge bem sucedido, quase caguei tudo e mandei pro main KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
+- feat: calculo devolve parcelas e limite máximo de cada uma
+
+
+## v3.0.2 - 2025-12-04
+
+- Merge pull request #26 from Max-Leal/feature/simulation-flow
+- feat(api): integra fluxo de simulação com endpoint real e ajusta modelos de dados e implementação de pagina para complemento de cadastro(simulation)
+
+
 ## v3.0.1 - 2025-12-04
 
 - Merge pull request #25 from Max-Leal/main

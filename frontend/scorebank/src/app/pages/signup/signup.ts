@@ -3,16 +3,18 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LoadingComponent } from '../../shared/loading/loading'; 
+import { DataService } from '../../shared/loading/data.service';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, LoadingComponent, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './signup.html',
   styleUrls: ['./signup.css']
 })
 // Mudei o nome para SignupComponent para evitar erros no arquivo de rotas
 export class SignupComponent implements OnInit {
+
 goToSignin(): void {
     this.router.navigate(['/signin']);
   }
@@ -28,14 +30,13 @@ goToSignin(): void {
 
   // Dados do formulário
   formData = {
-    name: '',
+    fullName: '', // <--- MUDE DE 'name' PARA 'fullName'
     cpf: '',
-    age: null,
-    income: null,
-    profession: ''
+    email: '',
+    password: ''
   };
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private dataService: DataService) {}
 
   ngOnInit(): void {
     // === LOADING DE ENTRADA (UX) ===
@@ -46,23 +47,26 @@ goToSignin(): void {
 
   // Chamado quando o usuário clica no botão "Solicitar Análise"
   onSubmit(): void {
-    // Validação Simples
-    if (!this.formData.name || !this.formData.cpf || !this.formData.age || !this.formData.income) {
-      alert('Por favor, preencha todos os campos obrigatórios.');
+    if (!this.formData.fullName || !this.formData.cpf || !this.formData.email || !this.formData.password) {
+      alert('Preencha todos os campos para continuar.');
       return;
     }
 
     console.log("Dados capturados:", this.formData);
+    // Salva no Service
+    this.dataService.setUserData(this.formData);
+
+    
 
     // === LOADING DE ANÁLISE ===
     this.loadingStage = 'ANALYSIS';
     this.currentPhrases = [
-      "Consultando Serasa...", 
-      "Calculando Risco...", 
-      "Verificando Renda...",
-      "Gerando Oferta..."
+      "Vamos completar seu cadastro..."
     ];
     this.isLoading = true; // Ativa o loading e esconde o formulário
+
+    // Navega para a próxima etapa (Simulação)
+    this.router.navigate(['/simulation']);
   }
 
   // Chamado automaticamente quando o tempo do loading (2.5s) acaba
