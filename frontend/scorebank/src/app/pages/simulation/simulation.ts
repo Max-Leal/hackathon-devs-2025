@@ -2,74 +2,104 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { DataService } from '../../services/data.service';
-import { LoadingComponent } from '../../shared/loading/loading';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-simulation',
   standalone: true,
-  imports: [CommonModule, FormsModule, LoadingComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './simulation.html',
   styleUrls: ['./simulation.css']
 })
 export class SimulationComponent implements OnInit {
 
+  userId: string = '';
+  
   financialData = {
-    age: null,
-    monthlyIncome: null,
     profession: '',
-    dependents: null
+    monthlyIncome: null as number | null,
+    monthsInCurrentJob: null as number | null
   };
 
-  isLoading = false;
-  
-  loadingPhrases = [
-    "Conectando ao servidor...",
-    "Analisando Perfil...", 
-    "Consultando Serasa...", 
-    "Calculando Risco..."
+  professions = [
+    'Concursado',
+    'Funcionário Público',
+    'Militar',
+    'Médido',
+    'Juiz',
+    'Policial',
+    'Analista_Ti',
+    'Autônomo',
+    'Estudante',
+    'Estagiário',
+    'Uber',
+    'Desempregado'
   ];
 
-  constructor(private router: Router, private dataService: DataService) {}
+  isLoading = false;
+  error = '';
+  success = '';
+
+  constructor(
+    private router: Router, 
+    private http: HttpClient
+  ) {}
 
   ngOnInit() {
-    if (this.dataService.financial.monthlyIncome) {
-      this.financialData = { ...this.dataService.financial } as any;
+    // Verifica se está logado
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      this.router.navigate(['/signin']);
+      return;
     }
+    this.userId = userId;
   }
 
   onSubmit() {
-    if (!this.financialData.age || !this.financialData.monthlyIncome) {
-      alert('Idade e Renda são obrigatórios.');
+    this.error = '';
+    this.success = '';
+
+    // Validação
+    if (!this.financialData.profession || 
+        !this.financialData.monthlyIncome || 
+        !this.financialData.monthsInCurrentJob) {
+      this.error = 'Preencha todos os campos.';
       return;
     }
 
-    // Salva os dados no service
-    this.dataService.setFinancialData(this.financialData as any);
-    
-    // Ativa o Loading
     this.isLoading = true;
-  }
 
-  // === AQUI É A MUDANÇA CRÍTICA ===
-  onLoadingComplete() {
-    console.log("Iniciando requisição HTTP...");
-
-    // A CORREÇÃO ESTÁ ABAIXO (adicionado : any)
-    this.dataService.sendAnalysis().subscribe({
-      
-      next: (response: any) => { // <--- Adicione : any aqui
-        console.log("Sucesso! Resposta:", response);
-        this.dataService.analysisResult = response;
+    // Requisição para calcular score
+    this.http.post(
+      `http://localhost:8080/customers/${this.userId}/score`, 
+      this.financialData
+    ).subscribe({
+      next: (response) => {
+        console.log('Score calculado com sucesso:', response);
+        this.success = 'Score calculado com sucesso!';
         this.isLoading = false;
-        this.router.navigate(['/dashboard']);
+
+        // Redireciona para dashboard após 2 segundos
+        setTimeout(() => {
+          this.router.navigate(['/dashboard']);
+        }, 2000);
       },
-
-      error: (error: any) => { // <--- Adicione : any aqui
-        console.error("Erro na API:", error);
+      error: (err) => {
+        console.error('Erro ao calcular score:', err);
         this.isLoading = false;
-        alert("Erro ao conectar com o servidor. Verifique se o Backend está rodando.");
+        
+        if (err.status === 400) {
+          this.error = 'Dados inválidos. Verifique os valores informados.';
+        } else if (err.status === 404) {
+          this.error = 'Usuário não encontrado.';
+        } else {
+          this.error = 'Erro ao calcular score. Tente novamente.';
+        }
       }
     });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/dashboard']);
   }
 }
