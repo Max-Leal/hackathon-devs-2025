@@ -2,6 +2,7 @@ package com.hackweek.scorebanking.dto;
 
 import com.hackweek.scorebanking.domain.RiskTier;
 import java.math.BigDecimal;
+import java.util.List;
 
 public record ScoreResultResponse(
         Long customerId,
@@ -10,5 +11,7 @@ public record ScoreResultResponse(
         BigDecimal approvedLimit,
         BigDecimal maxMonthlyInstallment,
         Integer maxInstallments,
-        BigDecimal interestRate
+        BigDecimal interestRate,
+        //List<String> feedback, ja adiciono
+        List<ScoreBreakdown> scoreAudit
 ) {}

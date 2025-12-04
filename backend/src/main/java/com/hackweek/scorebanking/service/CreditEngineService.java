@@ -1,53 +1,66 @@
 package com.hackweek.scorebanking.service;
 
 import com.hackweek.scorebanking.domain.RiskTier;
-import com.hackweek.scorebanking.entity.CustomerScoreData; // Importante!
+import com.hackweek.scorebanking.entity.CustomerScoreData;
+import com.hackweek.scorebanking.dto.ScoreBreakdown;
+import com.hackweek.scorebanking.dto.ScoreCalculationResult;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList; 
+import java.util.List;      
 
 @Service
 public class CreditEngineService {
 
-    public int calculateScore(CustomerScoreData data) {
-        // 1. FRAUDE = ZERO (Morte Súbita)
+    public ScoreCalculationResult calculateDetailedScore(CustomerScoreData data) {
+        List<ScoreBreakdown> audit = new ArrayList<>();
+        int currentScore = 0;
+
+        // 1. PONTUAÇÃO BASE
+        int baseScore = 25;
+        currentScore += baseScore;
+        audit.add(new ScoreBreakdown("Score Base", "Início Padrão", baseScore));
+
+        // 2. CHECK DE FRAUDE/IDADE (Bloqueios)
         if (Boolean.TRUE.equals(data.getFraudSuspicion())) {
-            return 0;
+            return new ScoreCalculationResult(0, List.of(new ScoreBreakdown("Fraude", "Detectada", -100)));
         }
-
-        // 2. IDADE < 18 = ZERO (Regra Legal)
-        int age = data.getAge() != null ? data.getAge() : 0;
-        if (age < 18) {
-            return 0;
-        }
-
-        // 3. PONTOS POR RENDA (Aumentamos o peso)
-        // Regra: 1 ponto a cada R$ 500. Teto subiu para 40 pontos.
+        
+        // 3. RENDA
         BigDecimal income = data.getMonthlyIncome() != null ? data.getMonthlyIncome() : BigDecimal.ZERO;
         int incomePoints = income.divide(new BigDecimal("500"), RoundingMode.FLOOR).intValue();
-        incomePoints = Math.min(incomePoints, 40); // Max 40 (antes era 30)
+        incomePoints = Math.min(incomePoints, 40); // Teto de 40
+        currentScore += incomePoints;
+        audit.add(new ScoreBreakdown("Renda Mensal", "R$ " + income, incomePoints));
 
-        // 4. PONTOS POR SCORE EXTERNO (Serasa)
+        // 4. SCORE EXTERNO (SERASA)
         int serasaScore = data.getCreditScore() != null ? data.getCreditScore() : 0;
-        int externalScorePoints = (serasaScore / 100) * 5; 
+        int externalPoints = (serasaScore / 100) * 5;
+        currentScore += externalPoints;
+        audit.add(new ScoreBreakdown("Score Serasa", String.valueOf(serasaScore), externalPoints));
 
-        // 4,5. pontos por profissão e tempo
-        int professionPoints = calculateProfessionPoints(data.getProfession());
+        // 5. PROFISSÃO
+        int profPoints = calculateProfessionPoints(data.getProfession());
+        currentScore += profPoints;
+        audit.add(new ScoreBreakdown("Profissão", data.getProfession(), profPoints));
+
+        // 6. TEMPO DE CASA
         int tenurePoints = calculateTenurePoints(data.getMonthsInCurrentJob());
+        currentScore += tenurePoints;
+        audit.add(new ScoreBreakdown("Estabilidade", data.getMonthsInCurrentJob() + " meses", tenurePoints));
 
-        // 5. PENALIDADE POR DÍVIDA
-        // Regra: Se deve mais de R$ 1.000, perde 1 ponto de cada.
+        // 7. DÍVIDA
         int debtPenalty = calculateDebtPenalty(data.getExternalDebt());
-        
-        // 6. CÁLCULO FINAL (Ajuste Fino)
-        // Base Score caiu para 25 (antes era 50).
-        int baseScore = 25;
-        
-        int totalScore = baseScore + incomePoints + externalScorePoints + professionPoints + tenurePoints - debtPenalty;
+        currentScore -= debtPenalty; // Subtrai
+        audit.add(new ScoreBreakdown("Dívida Externa", "R$ " + data.getExternalDebt(), -debtPenalty));
 
-        // Trava entre 0 e 100
-        return Math.max(0, Math.min(100, totalScore));
+        // TRAVA 0 a 100
+        int finalScore = Math.max(0, Math.min(100, currentScore));
+        
+        // Retorna o pacote completo
+        return new ScoreCalculationResult(finalScore, audit);
     }
 
     public RiskTier determineRisk(int score) {
