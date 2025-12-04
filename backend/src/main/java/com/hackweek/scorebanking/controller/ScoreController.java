@@ -6,9 +6,9 @@ import com.hackweek.scorebanking.service.CustomerScoreService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-// manda pro front
 @RestController
 @RequestMapping("/api/customers")
+@CrossOrigin(origins = "*")
 public class ScoreController {
 
     private final CustomerScoreService customerScoreService;
@@ -23,6 +23,12 @@ public class ScoreController {
             @RequestBody CustomerScoreDto request
     ) {
         ScoreResultResponse response = customerScoreService.processScoreAnalysis(customerId, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{customerId}/dashboard")
+    public ResponseEntity<ScoreResultResponse> getDashboardData(@PathVariable Long customerId) {
+        ScoreResultResponse response = customerScoreService.getLatestScoreData(customerId);
         return ResponseEntity.ok(response);
     }
 }
