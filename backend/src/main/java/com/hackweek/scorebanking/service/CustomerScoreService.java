@@ -66,6 +66,7 @@ public class CustomerScoreService {
         ScoreCalculationResult calculation = creditEngineService.calculateDetailedScore(scoreData);
         int score = calculation.totalScore();
         List<ScoreBreakdown> audit = calculation.breakdown();
+        List<String> feedbackMessages = creditEngineService.generateFeedback(scoreData);
         RiskTier riskTier = creditEngineService.determineRisk(score);
         BigDecimal approvedLimit = creditEngineService.calculateApprovedLimit(scoreData.getMonthlyIncome(), riskTier);
         BigDecimal safeInstallment = creditEngineService.calculateMaxInstallment(scoreData.getMonthlyIncome());
@@ -83,9 +84,7 @@ public class CustomerScoreService {
                 safeInstallment,
                 installments,
                 rate,
-
-                //feedbackMessages
-
+                feedbackMessages,
                 audit
         );
     }

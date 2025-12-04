@@ -140,4 +140,46 @@ public class CreditEngineService {
         return Math.min(penalty, 10);
     }
 
+    public List<String> generateFeedback(CustomerScoreData data) {
+        List<String> feedback = new ArrayList<>();
+
+        // 1. CHECAGEM DE BLOQUEIOS (Morte Súbita)
+        if (Boolean.TRUE.equals(data.getFraudSuspicion())) {
+            feedback.add("⚠️ CPF com restrição grave de segurança.");
+            return feedback; // Se for fraude, nem fala o resto.
+        }
+        if (data.getAge() != null && data.getAge() < 18) {
+            feedback.add("⚠️ Política interna: Crédito apenas para maiores de 18 anos.");
+            return feedback;
+        }
+
+        // 2. CHECAGEM DE PONTOS POSITIVOS E NEGATIVOS
+        
+        // Renda
+        if (data.getMonthlyIncome().compareTo(new BigDecimal("2000")) < 0) {
+            feedback.add("📉 A renda informada limita o potencial de crédito alto.");
+        } else {
+            feedback.add("✅ Renda compatível com a política de crédito.");
+        }
+
+        // Dívida (AQUI É O IMPORTANTE)
+        if (data.getExternalDebt() != null && data.getExternalDebt().compareTo(new BigDecimal("1000")) > 0) {
+            feedback.add("⚠️ Alto comprometimento com dívidas externas impactou sua pontuação.");
+        }
+
+        // Profissão / Estabilidade
+        if (data.getMonthsInCurrentJob() != null && data.getMonthsInCurrentJob() < 3) {
+            feedback.add("📉 Tempo de casa recente (período de experiência) reduz a estabilidade.");
+        } else if (data.getMonthsInCurrentJob() != null && data.getMonthsInCurrentJob() > 24) {
+            feedback.add("✅ Alta estabilidade profissional contribuiu positivamente.");
+        }
+
+        // Score Serasa
+        if (data.getCreditScore() != null && data.getCreditScore() < 400) {
+            feedback.add("📉 Histórico externo (Bureau de Crédito) abaixo da média.");
+        }
+
+        return feedback;
+    }
+
 }

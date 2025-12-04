@@ -12,6 +12,6 @@ public record ScoreResultResponse(
         BigDecimal maxMonthlyInstallment,
         Integer maxInstallments,
         BigDecimal interestRate,
-        //List<String> feedback, ja adiciono
+        List<String> feedback,
         List<ScoreBreakdown> scoreAudit
 ) {}
