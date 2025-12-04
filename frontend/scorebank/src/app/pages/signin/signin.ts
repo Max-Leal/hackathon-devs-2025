@@ -1,35 +1,66 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingComponent } from '../../shared/loading/loading';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-signin',
   standalone: true,
-  imports: [CommonModule, LoadingComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './signin.html',
-  styleUrls: ['./signin.css'], 
+  styleUrls: ['./signin.css']
 })
-export class SigninComponent implements OnInit {
+export class SigninComponent {
 
-  // Controla a visibilidade do loading
-  isLoading: boolean = false;
-  
-  // Controla quais frases aparecem
-  currentPhrases: string[] = [];
+  error: string = '';
 
-  // Variável para saber o estágio (INTRO ou LOGIN)
-  loadingStage: 'INTRO' | 'LOGIN' = 'INTRO';
+  formData = {
+    email: '',
+    password: ''
+  };
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private auth: AuthService
+  ) {}
 
-  ngOnInit(): void {
-    // Frase ajustada para Login (não "criar conta")
-    this.currentPhrases = ["Bem-vindo de volta!"];
-    this.isLoading = true;
+  goToSignup(): void {
+    this.router.navigate(['/signup']);
   }
 
-  onLoadingComplete(): void {
-    this.isLoading = false; // Esconde o loading
+  onSubmit(): void {
+    this.error = '';
+
+    // Validação simples
+    if (!this.formData.email || !this.formData.password) {
+      this.error = "Preencha todos os campos.";
+      return;
+    }
+
+    // Chamada ao backend
+    this.auth.login(this.formData).subscribe({
+      next: (response) => {
+        // Salvar dados do usuário no localStorage
+        localStorage.setItem('userId', response.id.toString());
+        localStorage.setItem('userName', response.fullNome);
+        localStorage.setItem('userEmail', response.email);
+
+        // Redirecionar para o dashboard
+        setTimeout(() => {
+          console.log('Redirecionando...');
+          this.router.navigate(['/']);
+        }, 2000);
+      },
+      error: (err) => {
+        if (err.status === 401) {
+          this.error = "Email ou senha incorretos.";
+        } else if (err.status === 404) {
+          this.error = "Usuário não encontrado.";
+        } else {
+          this.error = "Erro ao fazer login. Tente novamente.";
+        }
+      }
+    });
   }
 }

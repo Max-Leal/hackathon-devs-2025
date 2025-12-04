@@ -1,7 +1,59 @@
-<app-loading 
-  [isLoading]="isLoading" 
-  [phrases]="currentPhrases"
-  (loadingComplete)="onLoadingComplete()">
-</app-loading>
+<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
+    
+    <div class="text-center">
+      <h2 class="text-3xl font-extrabold text-[#319F86]">
+        Bem-vindo de volta
+      </h2>
+      <p class="mt-2 text-sm text-gray-700">
+        Entre com sua conta
+      </p>
+    </div>
 
-<p>signin works!</p>
+    <!-- Mensagem de Erro -->
+    @if (error) {
+      <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <span class="block sm:inline">{{ error }}</span>
+      </div>
+    }
+
+    <form class="mt-8 space-y-6" (ngSubmit)="onSubmit()">
+      
+      <div class="rounded-md space-y-4">
+        
+        <!-- Email -->
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <input id="email" name="email" type="email" required 
+            [(ngModel)]="formData.email"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-[#319F86] focus:border-[#319F86]" 
+            placeholder="seu@email.com">
+        </div>
+
+        <!-- Senha -->
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">Senha</label>
+          <input id="password" name="password" type="password" required 
+            [(ngModel)]="formData.password"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-[#319F86] focus:border-[#319F86]" 
+            placeholder="******">
+        </div>
+
+      </div>
+
+      <button type="submit" 
+        class="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#319F86] hover:bg-[#2b8c75] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#319F86] transition-colors">
+        Entrar
+      </button>
+      
+      <div class="text-center text-sm mt-4">
+        <span class="text-gray-700">Não tem uma conta? </span>
+        <button type="button" (click)="goToSignup()" 
+          class="font-medium text-[#319F86] hover:text-[#2b8c75] bg-transparent border-none cursor-pointer">
+          Criar conta
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
