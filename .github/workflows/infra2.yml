@@ -1,0 +1,114 @@
+name: Scorebanking CI/CD Deploy
+
+on:
+  push:
+    branches:
+      - feature/infrastructure
+  workflow_dispatch:
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  AWS_REGION: us-east-1 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write 
+
+    steps:
+
+      - name: Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
+
+      - name: Instalar Make (para tf-destroy/tf-apply)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make
+
+      - name: Destruir Recursos Antigos (Opcional, mas Útil)
+        run: make tf-destroy
+        working-directory: infra-escalavel
+        continue-on-error: true
+
+      - name: Aplicar Terraform & Provisionar AWS
+        id: apply_tf
+        run: make tf-apply
+        working-directory: infra-escalavel
+        
+      - name: Capturar Outputs do Terraform
+        id: get_outputs
+        run: |
+          # Captura as três variáveis chave necessárias
+          APP_URL=$(terraform output -raw application_url)
+          BACKEND_URL=$(terraform output -raw backend_api_url)
+          S3_BUCKET=$(terraform output -raw s3_bucket_for_frontend_upload)
+
+          # Expõe as variáveis para passos subsequentes
+          echo "app_url=$APP_URL" >> $GITHUB_OUTPUT
+          echo "backend_api_url=$BACKEND_URL" >> $GITHUB_OUTPUT
+          echo "s3_bucket=$S3_BUCKET" >> $GITHUB_OUTPUT
+        working-directory: infra-escalavel
+
+      - name: Setup Node.js (Para Angular)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configurar Credenciais AWS CLI (Para S3 Sync)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Instalar Dependências do Angular
+        run: npm install
+        working-directory: frontend/scorebank
+
+      - name: Build e Upload do Frontend para S3
+        run: |
+          BACKEND_URL="${{ steps.get_outputs.outputs.backend_api_url }}"
+          S3_BUCKET="${{ steps.get_outputs.outputs.s3_bucket }}"
+          
+          echo "Injetando URL da API: $BACKEND_URL"
+          
+          # 1. Injetar a URL do ALB no código fonte do Angular
+          # (Assume que o script 'update_api_url.sh' está na raiz do projeto Angular)
+          ./update_api_url.sh "$BACKEND_URL"
+
+          # 2. Compilar o projeto Angular
+          npm run build -- --output-path=dist
+
+          # 3. Sincronizar os arquivos compilados com o S3
+          echo "Sincronizando 'dist/' com s3://$S3_BUCKET"
+          aws s3 sync dist/ s3://$S3_BUCKET --delete --acl public-read
+        working-directory: frontend/scorebank
+        
+      - name: Publicar Link no Job Summary
+        run: |
+          echo "## Link da Aplicação Deployada" >> $GITHUB_STEP_SUMMARY
+          echo "A infraestrutura e o código Frontend foram implantados com sucesso." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "[**Acessar Aplicação**](${{ steps.get_outputs.outputs.app_url }})" >> $GITHUB_STEP_SUMMARY
+
+      - name:  Criar GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/heads/main')
+        with:
+          tag_name: deploy-${{ github.sha }}
+          name: Deploy Automático | Commit ${{ github.sha }}
+          body: |
+            ## 🎉 Novo Lançamento: Aplicação Implantada!
+            
+            Infraestrutura provisionada pelo Terraform e Frontend enviado ao CloudFront/S3.
+            
+            Acesse a nova versão diretamente por este link:
+            
+            [**Acessar Aplicação**](${{ steps.get_outputs.outputs.app_url }})
