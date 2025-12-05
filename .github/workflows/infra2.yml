@@ -59,7 +59,7 @@ jobs:
       - name: Setup Node.js (Para Angular)
         uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '20'
 
       - name: Configurar Credenciais AWS CLI (Para S3 Sync)
         uses: aws-actions/configure-aws-credentials@v4
