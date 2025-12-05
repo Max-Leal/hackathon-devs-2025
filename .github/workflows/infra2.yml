@@ -70,7 +70,10 @@ jobs:
 
       - name: Instalar Dependências do Angular
         run: |
-          npm install -g @angular/cli
+          npm cache clean --force
+          rm -rf node_modules
+          
+          npm install -g @angular/cli          
           npm install
         working-directory: frontend/scorebank
 
