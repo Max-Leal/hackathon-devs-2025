@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -8,11 +8,19 @@ import { DataService } from '../../services/data.service';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './signup.html',
   styleUrls: ['./signup.css']
 })
 export class SignupComponent implements OnInit {
+
+  onSignIn() {
+    this.router.navigate(['/signin']); 
+  }
+
+  onSignUp() {
+    this.router.navigate(['/signup']); 
+  }
 
   isLoading: boolean = false;
   currentPhrases: string[] = [];
@@ -20,6 +28,7 @@ export class SignupComponent implements OnInit {
 
   error: string = '';
   success: string = '';
+  isLogged = false;
 
   formData = {
     fullName: '',
@@ -38,6 +47,9 @@ export class SignupComponent implements OnInit {
   ngOnInit(): void {
     // CORREÇÃO: Não iniciar com loading ativo
     this.isLoading = false;
+
+    const userId = localStorage.getItem('userId');
+    if (userId) this.isLogged = true;
   }
 
   goToSignin(): void {
@@ -86,5 +98,12 @@ export class SignupComponent implements OnInit {
 
   onLoadingComplete(): void {
     this.isLoading = false;
+  }
+
+  logout(): void {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+    this.router.navigate(['/']);
   }
 }

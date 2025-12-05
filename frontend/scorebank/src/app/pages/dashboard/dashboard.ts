@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 interface CustomerResponse {
@@ -22,7 +22,7 @@ interface CustomerResponse {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
