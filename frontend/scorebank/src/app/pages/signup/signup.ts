@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -8,11 +8,19 @@ import { DataService } from '../../services/data.service';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './signup.html',
   styleUrls: ['./signup.css']
 })
 export class SignupComponent implements OnInit {
+
+  onSignIn() {
+    this.router.navigate(['/signin']); 
+  }
+
+  onSignUp() {
+    this.router.navigate(['/signup']); 
+  }
 
   isLoading: boolean = false;
   currentPhrases: string[] = [];

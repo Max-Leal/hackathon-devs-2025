@@ -2,22 +2,22 @@
     <header class="bg-white border-b border-gray-200">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex items-center h-10 justify-between">
-                <div class="flex items-center gap-2">
+                <a routerLink="/"  class="flex items-center gap-2 cursor-pointer">
                     <img src="logo.jpg" alt="ScoreBanking" class="h-15 w-auto" />
-                    <h1 class="text-[#111827] text-2xl font-bold">Score Banking</h1>
-                </div>
-                <div class="flex gap-3">
-                    <button (click)="onSignIn()" class="px-6 py-2 text-[#0B5FFF] hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">Entrar</button>
-                    <button (click)="onSignUp()" class="px-6 py-2 bg-[#0B5FFF] text-white rounded-lg hover:bg-[#0A54E0] transition-colors cursor-pointer">Criar conta</button>
+                    <h1 class="text-slate-600 sm:text-2xl text-xl font-bold">Score Banking</h1>
+                </a>
+                <div class="flex gap-3 ">
+                    <button (click)="onSignIn()"sm:text-lg text-sm class="px-6 py-2 text-slate-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">Entrar</button>
+                    <button (click)="onSignUp()"sm:text-lg text-sm class="px-6 py-2 bg-[#319F86] text-slate-700 rounded-lg hover:bg-[#2b8c75] transition-colors cursor-pointer">Criar conta</button>
                 </div>
             </div>
         </div>
     </header>
-    <section class="bg-[#0B5FFF] text-white py-20 sm:py-32">
+    <section class="bg-[#319F86] text-white py-20 sm:py-32">
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="max-w-3xl mx-auto text-center">
-                <h1 class="mb-6 text-white">
-                    Sua vida financeira mais simples e segura
+                <h1 class="mb-6 text-slate-700 text-4xl uppercase">
+                    Inteligência que impulsiona decisões de crédito mais seguras!
                 </h1>
                 <p class="mb-8 text-white/90 max-w-2xl mx-auto">
                     Banco digital com nível de confiança em tempo real, ofertas personalizadas e total transparência nas
@@ -25,7 +25,7 @@
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <button (click)="onSignUp()"
-                        class="cursor-pointer px-8 py-3 bg-white text-[#0B5FFF] rounded-lg hover:bg-gray-100 transition-colors">
+                        class="cursor-pointer px-8 py-3 bg-white text-[#319F86] rounded-lg hover:bg-gray-100 transition-colors">
                         Criar conta
                     </button>
                     <button (click)="onSignIn()"
@@ -66,22 +66,21 @@
             </div>
         </div>
     </section>
-    <footer class="bg-[#111827] text-white mt-auto py-12">
+    <footer class="bg-[#2b8c75] text-white mt-auto py-12">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                 <div>
                     <div class="flex items-center gap-2 mb-4">
-
                         <span>ConfiaBank</span>
                     </div>
-                    <p class="text-gray-400 text-sm">
+                    <p class="text-gray-200 text-sm">
                         Banco digital com transparência e segurança para sua vida financeira.
                     </p>
                 </div>
 
                 <div>
                     <h4 class="mb-4 text-white">Produtos</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
+                    <ul class="space-y-2 text-sm text-gray-200">
                         <li><a href="#" class="hover:text-white transition-colors">Conta digital</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Empréstimos</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Cartões</a></li>
@@ -91,7 +90,7 @@
 
                 <div>
                     <h4 class="mb-4 text-white">Institucional</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
+                    <ul class="space-y-2 text-sm text-gray-200">
                         <li><a href="#" class="hover:text-white transition-colors">Sobre nós</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Segurança</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Privacidade</a></li>
@@ -101,7 +100,7 @@
 
                 <div>
                     <h4 class="mb-4 text-white">Contato</h4>
-                    <ul class="space-y-3 text-sm text-gray-400">
+                    <ul class="space-y-3 text-sm text-gray-200">
                         <li class="flex items-center gap-2">
                             <span>0800 123 4567</span>
                         </li>
@@ -115,7 +114,7 @@
                 </div>
             </div>
 
-            <div class="pt-8 border-t border-gray-800 text-center text-sm text-gray-400">
+            <div class="pt-8 border-t border-gray-800 text-center text-sm text-gray-100">
                 <p>© 2025 Score Banking. Todos os direitos reservados.</p>
             </div>
         </div>
