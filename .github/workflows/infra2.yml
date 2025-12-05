@@ -87,7 +87,7 @@ jobs:
           chmod +x ./update_api_url.sh
           ./update_api_url.sh "$BACKEND_URL"
 
-          ng build --configuration production --output-path=dist
+          ng build --configuration production --output-path=dist --optimization=false
 
           echo "Sincronizando 'dist/' com s3://$S3_BUCKET"
           aws s3 sync dist/ s3://$S3_BUCKET --delete --acl public-read

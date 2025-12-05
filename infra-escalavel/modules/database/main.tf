@@ -27,7 +27,7 @@ resource "aws_instance" "db_instance" {
     docker-compose up -d db
     echo "PostgreSQL container started."
   EOF
-  ) // ARRUMAR PARA USAR O COMPOSE
+  ) 
 
   tags = {
     Name        = "scorebanking-database"
