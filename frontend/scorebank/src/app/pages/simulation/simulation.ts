@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-simulation',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './simulation.html',
   styleUrls: ['./simulation.css']
 })
@@ -25,10 +25,10 @@ export class SimulationComponent implements OnInit {
     'Concursado',
     'Funcionário Público',
     'Militar',
-    'Médido',
+    'Médico',
     'Juiz',
     'Policial',
-    'Analista_Ti',
+    'Analista TI',
     'Autônomo',
     'Estudante',
     'Estagiário',
@@ -101,5 +101,12 @@ export class SimulationComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+  logout(): void {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+    this.router.navigate(['/']);
   }
 }
