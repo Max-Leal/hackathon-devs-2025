@@ -8,7 +8,7 @@ systemctl enable docker
 cd /root
 git clone https://github.com/Max-Leal/hackathon-devs-2025.git
 cd ./hackathon-devs-2025
-git checkout main
+git checkout feature/infrastructure
 
 DB_PRIVATE_IP="${db_ip}"
 
