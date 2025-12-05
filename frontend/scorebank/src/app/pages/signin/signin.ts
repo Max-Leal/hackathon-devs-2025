@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +11,14 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './signin.html',
   styleUrls: ['./signin.css']
 })
-export class SigninComponent {
+export class SigninComponent implements OnInit {
+
+  isLogged = false;
+
+  ngOnInit(): void {
+    const userId = localStorage.getItem('userId');
+    if (userId) this.isLogged = true;
+  }
 
   onSignIn() {
     this.router.navigate(['/signin']); 
@@ -70,5 +77,12 @@ export class SigninComponent {
         }
       }
     });
+  }
+
+  logout(): void {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+    this.router.navigate(['/']);
   }
 }

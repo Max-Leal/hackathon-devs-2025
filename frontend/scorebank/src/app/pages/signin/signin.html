@@ -6,9 +6,16 @@
           <img src="logo.jpg" alt="ScoreBanking" class="h-15 w-auto" />
           <h1 class="text-slate-600 sm:text-2xl text-xl font-bold">Score Banking</h1>
         </a>
-        <div class="flex gap-3">
-          <button (click)="onSignIn()" class="sm:text-lg text-sm px-6 py-2 text-slate-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">Entrar</button>
-          <button (click)="onSignUp()" class="sm:text-lg text-sm px-6 py-2 bg-[#319F86] text-slate-700 rounded-lg hover:bg-[#2b8c75] transition-colors cursor-pointer">Criar conta</button>
+        <div class="flex gap-3 ">
+          @if (isLogged) {
+              <button routerLink="/dashboard" class="sm:text-lg text-sm px-6 py-2 bg-[#319F86] text-slate-700 rounded-lg hover:bg-[#2b8c75] transition-colors cursor-pointer">Dashboard</button>
+              <button (click)="logout()" class="sm:text-lg text-sm px-6 py-2 text-slate-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">Logout</button>  
+          }
+
+          @if (!isLogged) {
+              <button (click)="onSignIn()" class="sm:text-lg text-sm px-6 py-2 text-slate-700 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">Entrar</button>
+              <button (click)="onSignUp()" class="sm:text-lg text-sm px-6 py-2 bg-[#319F86] text-slate-700 rounded-lg hover:bg-[#2b8c75] transition-colors cursor-pointer">Criar conta</button>
+          }
         </div>
       </div>
     </div>

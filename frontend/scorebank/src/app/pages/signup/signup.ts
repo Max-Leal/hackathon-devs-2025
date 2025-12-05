@@ -28,6 +28,7 @@ export class SignupComponent implements OnInit {
 
   error: string = '';
   success: string = '';
+  isLogged = false;
 
   formData = {
     fullName: '',
@@ -46,6 +47,9 @@ export class SignupComponent implements OnInit {
   ngOnInit(): void {
     // CORREÇÃO: Não iniciar com loading ativo
     this.isLoading = false;
+
+    const userId = localStorage.getItem('userId');
+    if (userId) this.isLogged = true;
   }
 
   goToSignin(): void {
@@ -94,5 +98,12 @@ export class SignupComponent implements OnInit {
 
   onLoadingComplete(): void {
     this.isLoading = false;
+  }
+
+  logout(): void {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+    this.router.navigate(['/']);
   }
 }
