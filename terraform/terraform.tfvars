@@ -8,6 +8,6 @@ subnet_name         = "scorebanking-subnet"
 # ------------------------------------------------
 # ec2 variables
 # ------------------------------------------------
-instance_name = "scorebanking-ec2"
+instance_name = "scorebanking-server"
 instance_type = "t3.micro"
 ami_id        = "ami-0f9c27b471bdcd702"
