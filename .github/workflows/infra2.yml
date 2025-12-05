@@ -80,7 +80,7 @@ jobs:
           echo "Injetando URL da API: $BACKEND_URL"
           
           # 1. Injetar a URL do ALB no código fonte do Angular
-          # (Assume que o script 'update_api_url.sh' está na raiz do projeto Angular)
+          chmod +x ./update_api_url.sh
           ./update_api_url.sh "$BACKEND_URL"
 
           # 2. Compilar o projeto Angular
