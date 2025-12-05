@@ -59,7 +59,7 @@ jobs:
       - name: Setup Node.js (Para Angular)
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '18'
 
       - name: Configurar Credenciais AWS CLI (Para S3 Sync)
         uses: aws-actions/configure-aws-credentials@v4
@@ -69,7 +69,9 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Instalar Dependências do Angular
-        run: npm install
+        run: |
+          npm install -g @angular/cli
+          npm install
         working-directory: frontend/scorebank
 
       - name: Build e Upload do Frontend para S3
@@ -78,15 +80,12 @@ jobs:
           S3_BUCKET="${{ steps.get_outputs.outputs.s3_bucket }}"
           
           echo "Injetando URL da API: $BACKEND_URL"
-          
-          # 1. Injetar a URL do ALB no código fonte do Angular
+        
           chmod +x ./update_api_url.sh
           ./update_api_url.sh "$BACKEND_URL"
 
-          # 2. Compilar o projeto Angular
-          npm run build -- --output-path=dist
+          ng build --configuration production --output-path=dist
 
-          # 3. Sincronizar os arquivos compilados com o S3
           echo "Sincronizando 'dist/' com s3://$S3_BUCKET"
           aws s3 sync dist/ s3://$S3_BUCKET --delete --acl public-read
         working-directory: frontend/scorebank
