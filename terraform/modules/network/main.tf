@@ -3,7 +3,7 @@ resource "aws_security_group" "sgScorebanking" {
   vpc_id = var.vpc_id
 
   dynamic "ingress" {
-    for_each = [4200, 8080]
+    for_each = [22, 4200, 8080]
 
     content {
       description = "Allow port ${ingress.value}"
