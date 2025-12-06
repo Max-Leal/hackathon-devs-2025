@@ -4,7 +4,8 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
-# --- 1. Internet Gateway (Existente) ---
+# --- 1. Internet Gateway (MODIFICADO) ---
+# Em vez de criar (resource), nós BUSCAMOS o que já existe na sua VPC (data)
 data "aws_internet_gateway" "default" {
   filter {
     name   = "attachment.vpc-id"
@@ -38,7 +39,7 @@ resource "aws_subnet" "private" {
   }
 }
 
-# --- 3. NAT Gateway ---
+# --- 3. NAT Gateway e Roteamento ---
 
 resource "aws_eip" "nat" {
   domain = "vpc"
@@ -51,16 +52,20 @@ resource "aws_nat_gateway" "nat" {
   tags = {
     Name = "Project-NAT-Gateway-scorebanking"
   }
+  
+  # Removemos o depends_on do IGW pois ele já existe
 }
 
-# --- 4. Tabelas de Rota ---
+# --- 4. Tabelas de Rota (Route Tables) ---
 
+# Rota Pública: Aponta para o IGW encontrado (data)
 resource "aws_route_table" "public" {
   vpc_id = var.existing_vpc_id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = data.aws_internet_gateway.default.id
+    # CORREÇÃO AQUI: Usando o ID do Data Source, não do Resource
+    gateway_id = data.aws_internet_gateway.default.id 
   }
 
   tags = {
@@ -68,6 +73,7 @@ resource "aws_route_table" "public" {
   }
 }
 
+# Rota Privada: Aponta para o NAT Gateway (Criado por nós)
 resource "aws_route_table" "private" {
   vpc_id = var.existing_vpc_id
 
@@ -81,6 +87,7 @@ resource "aws_route_table" "private" {
   }
 }
 
+# Associações
 resource "aws_route_table_association" "public" {
   count          = length(aws_subnet.public)
   subnet_id      = aws_subnet.public[count.index].id
@@ -93,16 +100,12 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private.id
 }
 
-# --- 5. Security Groups (CONFIGURAÇÃO FINAL HACKATHON) ---
-
-# SG-1: Database
+# --- 5. Security Groups ---
+# (Mantenha seus Security Groups abaixo exatamente como estavam no arquivo anterior)
 resource "aws_security_group" "sg_database" {
   name   = "database-scorebanking"
   vpc_id = var.existing_vpc_id
   tags   = { Name = "scorebanking-database-sg" }
-  
-  # A regra de entrada do banco (5432) fica aqui embaixo como regra cruzada
-  
   egress {
     from_port   = 0
     to_port     = 0
@@ -111,13 +114,11 @@ resource "aws_security_group" "sg_database" {
   }
 }
 
-# SG-2: Backend (LIBERADO GERAL)
 resource "aws_security_group" "sg_backend" {
   name   = "backend-scorebanking"
   vpc_id = var.existing_vpc_id
   tags   = { Name = "scorebanking-backend-sg" }
   
-  # Entrada: Libera 8080 para o mundo (ALB e Navegador)
   ingress {
     from_port   = 8080
     to_port     = 8080
@@ -125,15 +126,6 @@ resource "aws_security_group" "sg_backend" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Entrada: Libera SSH (22) para debug
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # Saída: Libera tudo (para instalar Docker)
   egress {
     from_port   = 0
     to_port     = 0
@@ -142,12 +134,10 @@ resource "aws_security_group" "sg_backend" {
   }
 }
 
-# SG-3: ALB
 resource "aws_security_group" "sg_alb" {
   name   = "alb-scorebanking"
   vpc_id = var.existing_vpc_id
   tags   = { Name = "scorebanking-alb-sg" }
-  
   ingress {
     from_port   = 80
     to_port     = 80
@@ -170,9 +160,8 @@ resource "aws_security_group" "sg_alb" {
 }
 
 # --- 6. Regras de Referência Cruzada ---
+# (Copie as regras db_ingress, backend_egress, etc. do arquivo anterior aqui)
 
-# MANTIDA: Permite o Backend acessar o Banco (5432)
-# Essa regra é necessária porque o SG do Banco NÃO tem um "ingress 0.0.0.0/0" inline.
 resource "aws_security_group_rule" "db_ingress_from_backend" {
   type                     = "ingress"
   from_port                = var.postgresql_port
@@ -182,7 +171,29 @@ resource "aws_security_group_rule" "db_ingress_from_backend" {
   security_group_id        = aws_security_group.sg_database.id
 }
 
-# REMOVIDAS AS OUTRAS REGRAS QUE DAVAM CONFLITO:
-# - backend_egress_to_db (Já coberto pelo egress 0.0.0.0/0 do backend)
-# - backend_ingress_from_alb (Já coberto pelo ingress 0.0.0.0/0 do backend)
-# - alb_egress_to_backend (Já coberto pelo egress 0.0.0.0/0 do ALB)
+resource "aws_security_group_rule" "backend_egress_to_db" {
+  type                     = "egress"
+  from_port                = var.postgresql_port
+  to_port                  = var.postgresql_port
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.sg_database.id
+  security_group_id        = aws_security_group.sg_backend.id
+}
+
+resource "aws_security_group_rule" "backend_ingress_from_alb" {
+  type                     = "ingress"
+  from_port                = var.java_api_port
+  to_port                  = var.java_api_port
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.sg_alb.id
+  security_group_id        = aws_security_group.sg_backend.id
+}
+
+resource "aws_security_group_rule" "alb_egress_to_backend" {
+  type                     = "egress"
+  from_port                = var.java_api_port
+  to_port                  = var.java_api_port
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.sg_backend.id
+  security_group_id        = aws_security_group.sg_alb.id
+}
