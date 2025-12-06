@@ -61,7 +61,7 @@ resource "aws_launch_template" "backend_lt" {
   key_name      = var.key_name
 
   network_interfaces {
-    associate_public_ip_address = false # Subnet Privada
+    associate_public_ip_address = true # Subnet Privada
     security_groups             = [var.sg_backend_id]
   }
 
