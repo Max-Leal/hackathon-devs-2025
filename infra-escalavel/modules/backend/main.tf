@@ -1,4 +1,5 @@
 # modules/backend/main.tf
+
 # --- 1. Application Load Balancer (ALB) ---
 resource "aws_lb" "alb" {
   name               = "scorebanking-alb"
@@ -12,17 +13,16 @@ resource "aws_lb" "alb" {
   }
 }
 
-# Target Group: Define a porta e o health check para onde o ALB enviará o tráfego
+# Target Group
 resource "aws_lb_target_group" "tg" {
   name        = "hackathon-tg"
-  port        = var.java_api_port # Porta da API Java (8080)
+  port        = var.java_api_port
   protocol    = "HTTP"
-  vpc_id      = data.aws_vpc.selected.id # Usaremos um data source para obter o VPC ID do SG
+  vpc_id      = data.aws_vpc.selected.id
   target_type = "instance"
 
   health_check {
-    # Altere o caminho se sua API tiver um endpoint de status (ex: /health)
-    path                = "/"
+    path                = "/actuator/health" 
     protocol            = "HTTP"
     port                = var.java_api_port
     healthy_threshold   = 2
@@ -32,7 +32,7 @@ resource "aws_lb_target_group" "tg" {
   }
 }
 
-# Listener: Escuta na porta 80 e encaminha para o Target Group
+# Listener
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.alb.arn
   port              = "80"
@@ -44,7 +44,7 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# Data Source: Usado para obter o VPC ID, necessário no Target Group
+# Data Source
 data "aws_vpc" "selected" {
   id = data.aws_security_group.backend_sg_info.vpc_id
 }
@@ -52,7 +52,7 @@ data "aws_security_group" "backend_sg_info" {
   id = var.sg_backend_id
 }
 
-# --- 2. Launch Template (Planta da EC2) ---
+# --- 2. Launch Template ---
 
 resource "aws_launch_template" "backend_lt" {
   name_prefix   = "backend-lt"
@@ -61,7 +61,7 @@ resource "aws_launch_template" "backend_lt" {
   key_name      = var.key_name
 
   network_interfaces {
-    associate_public_ip_address = false # Fica na subnet privada, sem IP público
+    associate_public_ip_address = false # Subnet Privada
     security_groups             = [var.sg_backend_id]
   }
 
@@ -85,11 +85,8 @@ resource "aws_autoscaling_group" "backend_asg" {
   max_size         = var.max_size
   desired_capacity = var.min_size
 
-  # Instâncias devem ser criadas nas subnets privadas
   vpc_zone_identifier = var.private_subnet_ids
-
-  # Associa o ASG ao Target Group do ALB
-  target_group_arns = [aws_lb_target_group.tg.arn]
+  target_group_arns   = [aws_lb_target_group.tg.arn]
 
   launch_template {
     id      = aws_launch_template.backend_lt.id
