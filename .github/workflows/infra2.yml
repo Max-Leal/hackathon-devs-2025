@@ -79,14 +79,15 @@ jobs:
 
       - name: Build e Upload do Frontend para S3
         run: |
-          BACKEND_URL="${{ steps.get_outputs.outputs.backend_api_url }}"
+          
+          APP_URL="${{ steps.get_outputs.outputs.app_url }}"
           S3_BUCKET="${{ steps.get_outputs.outputs.s3_bucket }}"
           
-          echo "Injetando URL da API: $BACKEND_URL"
-        
+          echo "Injetando URL (Deve ser HTTPS/CloudFront): $APP_URL"
+
           chmod +x ./update_api_url.sh
-          
-          ./update_api_url.sh "$BACKEND_URL"
+
+          ./update_api_url.sh "$APP_URL"
 
           sed -i 's/"maximumError": "1mb"/"maximumError": "5mb"/' angular.json
 
