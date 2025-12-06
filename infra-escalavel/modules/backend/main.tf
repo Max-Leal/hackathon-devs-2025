@@ -22,7 +22,7 @@ resource "aws_lb_target_group" "tg" {
   target_type = "instance"
 
   health_check {
-    path                = "/" 
+    path                = "/custumers" 
     protocol            = "HTTP"
     port                = var.java_api_port
     matcher             = "200-499"
