@@ -12,5 +12,8 @@ docker-stop:
 docker-clear:
 	docker-compose down --volumes --remove-orphans
 
-run-backend:
-	docker-compose run backend
+build-backend:
+	docker-compose build backend
+
+run-backend: build-backend
+	docker-compose run backend -d

@@ -20,5 +20,4 @@ else
     echo "Warning: troca_db_ip.sh não encontrado. Verifique seu repositório."
 fi
 
-make docker-build
-make docker-run
+make run-backend
