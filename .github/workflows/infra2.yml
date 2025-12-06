@@ -85,12 +85,15 @@ jobs:
           echo "Injetando URL da API: $BACKEND_URL"
         
           chmod +x ./update_api_url.sh
+          
           ./update_api_url.sh "$BACKEND_URL"
+
+          sed -i 's/"maximumError": "1mb"/"maximumError": "5mb"/' angular.json
 
           ng build --configuration production --output-path=dist --optimization=false
 
-          echo "Sincronizando 'dist/' com s3://$S3_BUCKET"
-          aws s3 sync dist/ s3://$S3_BUCKET --delete --acl public-read
+          echo "Sincronizando 'dist/browser/' com s3://$S3_BUCKET"
+          aws s3 sync dist/browser/ s3://$S3_BUCKET --delete
         working-directory: frontend/scorebank
         
       - name: Publicar Link no Job Summary
