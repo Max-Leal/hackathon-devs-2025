@@ -22,7 +22,7 @@ resource "aws_lb_target_group" "tg" {
   target_type = "instance"
 
   health_check {
-    path                = "/actuator/health" 
+    path                = "/" 
     protocol            = "HTTP"
     port                = var.java_api_port
     healthy_threshold   = 2
